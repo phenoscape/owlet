@@ -117,27 +117,10 @@ class QueryExpander(reasoner: OWLReasoner) {
 	def parseExpression(literal: Node_Literal, prefixes: Map[String, String]): OWLClassExpression = {
 			val expression = literal.getLiteralLexicalForm();
 			literal.getLiteralDatatypeURI() match {
-			case MANCHESTER => parseManchester(expression, prefixes);
+			case MANCHESTER => ManchesterSyntaxClassExpressionParser.parse(expression, prefixes);
 			case OWLXML => OWLXMLClassExpressionParser.parse(expression, prefixes);
 			case FUNCTIONAL => parseFunctional(expression, prefixes);
 			}
-	}
-
-	def parseManchester(expression: String, prefixes: Map[String, String]): OWLClassExpression = {
-			val prefixManager = new DefaultPrefixManager();
-			//prefixes.foreach {case (key, value) => prefixManager.setPrefix(key + ":", value)};
-			val manager = OWLManager.createOWLOntologyManager();
-			val ontology = manager.createOntology();
-			manager.addAxiom(ontology, factory.getOWLDeclarationAxiom(factory.getOWLClass(IRI.create("http://example.org/Woman"))));
-			manager.addAxiom(ontology, factory.getOWLDeclarationAxiom(factory.getOWLClass(IRI.create("http://example.org/Parent"))));
-			//val entityChecker = new ShortFormEntityChecker(new BidirectionalShortFormProviderAdapter(new ManchesterOWLSyntaxPrefixNameShortFormProvider(prefixManager)));
-			//val entityChecker = Checker;
-			//val manchester = new ManchesterOWLSyntaxClassExpressionParser(factory, entityChecker);
-			val manchester = new ManchesterSyntaxTool(ontology, Set[OWLOntology](), false);
-			manchester.parseManchesterExpression(expression);
-
-
-			return null;
 	}
 
 	def parseFunctional(expression: String, prefixes: Map[String, String]): OWLClassExpression = {
@@ -159,35 +142,6 @@ class QueryExpander(reasoner: OWLReasoner) {
 
 	def queryIndividuals(expression: OWLClassExpression): Set[OWLNamedIndividual] = {
 			reasoner.getInstances(expression, false).getFlattened();
-	}
-
-	object Checker extends OWLEntityChecker {
-
-		def getOWLAnnotationProperty(name: String): OWLAnnotationProperty = {
-				println("Asked for annotation property: " + name);
-				factory.getOWLAnnotationProperty(IRI.create("http://example.org/annotation"));
-		} 
-		def	getOWLClass(name: String): OWLClass = {
-				println("Asked for class: " + name);
-				factory.getOWLClass(IRI.create("http://example.org/class"));
-		} 
-		def	getOWLDataProperty(name: String): OWLDataProperty = {
-				println("Asked for data property: " + name);
-				factory.getOWLDataProperty(IRI.create("http://example.org/dataproperty"));
-		} 
-		def	getOWLDatatype(name: String): OWLDatatype = {
-				println("Asked for datatype: " + name);
-				factory.getOWLDatatype(IRI.create("http://example.org/datatype"));
-		} 
-		def	getOWLIndividual(name: String): OWLNamedIndividual = {
-				println("Asked for individual: " + name);
-				factory.getOWLNamedIndividual(IRI.create("http://example.org/individual"));
-		} 
-
-		def getOWLObjectProperty(name: String) : OWLObjectProperty = {
-				factory.getOWLObjectProperty(IRI.create("http://example.org/objectproperty"));
-		}
-
 	}
 
 }
