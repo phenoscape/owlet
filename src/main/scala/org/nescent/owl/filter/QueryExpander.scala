@@ -116,13 +116,11 @@ class QueryExpander(reasoner: OWLReasoner) {
 
 	def parseExpression(literal: Node_Literal, prefixes: Map[String, String]): OWLClassExpression = {
 			val expression = literal.getLiteralLexicalForm();
-			val result = literal.getLiteralDatatypeURI() match {
+			literal.getLiteralDatatypeURI() match {
 			case MANCHESTER => parseManchester(expression, prefixes);
 			case OWLXML => OWLXMLClassExpressionParser.parse(expression, prefixes);
 			case FUNCTIONAL => parseFunctional(expression, prefixes);
 			}
-			println(result);
-			result;
 	}
 
 	def parseManchester(expression: String, prefixes: Map[String, String]): OWLClassExpression = {
@@ -147,7 +145,6 @@ class QueryExpander(reasoner: OWLReasoner) {
 	}
 
 	def querySubClasses(expression: OWLClassExpression): Set[OWLClass] = {
-			println("Querying subclasses of: " + expression);
 			reasoner.getSubClasses(expression, false).getFlattened();
 	}
 
