@@ -33,13 +33,13 @@ object OWLXMLClassExpressionParser {
 
 	; case class ObjectRestriction(property: OWLObjectPropertyExpression, filler: Option[OWLClassExpression]);
 
-	def parse(expression: String): OWLClassExpression = {
+	def parse(expression: String): Option[OWLClassExpression] = {
 			parse(expression, Map());
 	}
 
-	def parse(expression: String, prefixes: Map[String, String]): OWLClassExpression = {
+	def parse(expression: String, prefixes: Map[String, String]): Option[OWLClassExpression] = {
 			val expressionXML = XML.loadString(expression);
-			parseClassExpression(expressionXML, prefixes);			
+			Option(parseClassExpression(expressionXML, prefixes));			
 	}
 
 	def parseClassExpression(element: Elem, prefixes: Map[String, String]): OWLClassExpression = {
@@ -62,6 +62,7 @@ object OWLXMLClassExpressionParser {
 			case <DataMinCardinality>{_*}</DataMinCardinality> => null;
 			case <DataMaxCardinality>{_*}</DataMaxCardinality> => null;
 			case <DataExactCardinality>{_*}</DataExactCardinality> => null;
+			case _ => null;
 			}
 	}
 
@@ -97,7 +98,6 @@ object OWLXMLClassExpressionParser {
 			} else {
 				None;
 			}
-
 			ObjectRestriction(property, filler);
 	}
 
