@@ -52,13 +52,13 @@
 			<groupId>org.semanticweb.elk</groupId>
 			<artifactId>elk-owlapi</artifactId>
 			<version>0.4.0</version>
-			<scope>test</scope>
+			<!-- <scope>test</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
-			<scope>provided</scope>
+		<!--	<scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.owlapi</groupId>
@@ -110,7 +110,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.nescent.sparqdl.Main</mainClass>
+							<mainClass>org.nescent.owl.filter.RunQuery</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
