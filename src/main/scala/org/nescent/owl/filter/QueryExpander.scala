@@ -3,31 +3,20 @@ package org.nescent.owl.filter
 import scala.collection.JavaConversions._
 import scala.collection.Map
 import scala.collection.Set
-import scala.collection.mutable
-import org.apache.log4j.BasicConfigurator
-import org.apache.log4j.Level
-import org.apache.log4j.Logger
-import org.obolibrary.macro.ManchesterSyntaxTool
+
 import org.semanticweb.owlapi.apibinding.OWLManager
-import org.semanticweb.owlapi.expression.OWLEntityChecker
-import org.semanticweb.owlapi.model.IRI
-import org.semanticweb.owlapi.model.OWLAnnotationProperty
 import org.semanticweb.owlapi.model.OWLClass
 import org.semanticweb.owlapi.model.OWLClassExpression
-import org.semanticweb.owlapi.model.OWLDataProperty
-import org.semanticweb.owlapi.model.OWLDatatype
+import org.semanticweb.owlapi.model.OWLEntity
 import org.semanticweb.owlapi.model.OWLNamedIndividual
-import org.semanticweb.owlapi.model.OWLObjectProperty
-import org.semanticweb.owlapi.model.OWLOntology
 import org.semanticweb.owlapi.reasoner.OWLReasoner
-import org.semanticweb.owlapi.util.DefaultPrefixManager
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary
+
 import com.hp.hpl.jena.graph.NodeFactory
 import com.hp.hpl.jena.graph.Node_Literal
 import com.hp.hpl.jena.graph.Node_Variable
 import com.hp.hpl.jena.query.Query
 import com.hp.hpl.jena.query.QueryFactory
-import com.hp.hpl.jena.sparql.core.TriplePath
 import com.hp.hpl.jena.sparql.expr.E_OneOf
 import com.hp.hpl.jena.sparql.expr.ExprList
 import com.hp.hpl.jena.sparql.expr.ExprVar
@@ -37,7 +26,6 @@ import com.hp.hpl.jena.sparql.syntax.ElementGroup
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock
 import com.hp.hpl.jena.sparql.syntax.ElementVisitorBase
 import com.hp.hpl.jena.sparql.syntax.ElementWalker
-import org.semanticweb.owlapi.model.OWLEntity
 
 /**
  * Processes SPARQL queries containing triple patterns with embedded OWL class expressions. 
