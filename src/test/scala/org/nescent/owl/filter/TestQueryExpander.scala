@@ -40,7 +40,7 @@ class TestQueryExpander {
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 					PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 					PREFIX owl: <http://www.w3.org/2002/07/owl#>
-					PREFIX of: <http://purl.org/phenoscape/owl-filter/syntax#>
+					PREFIX ow: <http://purl.org/phenoscape/owlet/syntax#>
 					PREFIX head: <http://purl.obolibrary.org/obo/UBERON_0000033>
 					PREFIX part_of: <http://purl.obolibrary.org/obo/BFO_0000050>
 					PREFIX has_part: <http://purl.obolibrary.org/obo/BFO_0000051>
@@ -49,7 +49,7 @@ class TestQueryExpander {
 					{
 					?organism has_part: ?part .
 					?part rdf:type ?structure .
-					?structure rdfs:subClassOf "%s"^^of:owx .
+					?structure rdfs:subClassOf "%s"^^ow:owx .
 					}
 					""".format(xmlExpressionText);
 			val expander = new QueryExpander(TestQueryExpander.reasoner);
@@ -61,7 +61,7 @@ class TestQueryExpander {
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 					PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 					PREFIX owl: <http://www.w3.org/2002/07/owl#>
-					PREFIX of: <http://purl.org/phenoscape/owl-filter/syntax#>
+					PREFIX ow: <http://purl.org/phenoscape/owlet/syntax#>
 					PREFIX head: <http://purl.obolibrary.org/obo/UBERON_0000033>
 					PREFIX part_of: <http://purl.obolibrary.org/obo/BFO_0000050>
 					PREFIX has_part: <http://purl.obolibrary.org/obo/BFO_0000051>
@@ -70,7 +70,7 @@ class TestQueryExpander {
 					{
 					?organism has_part: ?part .
 					?part rdf:type ?structure .
-					?structure rdfs:subClassOf "part_of: some head:"^^of:omn .
+					?structure rdfs:subClassOf "part_of: some head:"^^ow:omn .
 					}
 					"""
 			  println(expander.expandQueryString(manchesterQuery));

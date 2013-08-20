@@ -38,10 +38,10 @@ class QueryExpander(reasoner: OWLReasoner) {
 	val SUBCLASS_OF = OWLRDFVocabulary.RDFS_SUBCLASS_OF.getIRI().toString();
 	val EQUIVALENT_CLASS = OWLRDFVocabulary.OWL_EQUIVALENT_CLASS.getIRI().toString();
 	val TYPE = OWLRDFVocabulary.RDF_TYPE.getIRI().toString();
-	val OWL_FILTER_NS = "http://purl.org/phenoscape/owl-filter/syntax#";
-	val MANCHESTER = OWL_FILTER_NS + "omn";
-	val OWLXML = OWL_FILTER_NS + "owx";
-	val FUNCTIONAL = OWL_FILTER_NS + "ofn";
+	val OWLET_NS = "http://purl.org/phenoscape/owlet/syntax#";
+	val MANCHESTER = OWLET_NS + "omn";
+	val OWLXML = OWLET_NS + "owx";
+	val FUNCTIONAL = OWLET_NS + "ofn";
 	val SYNTAXES = Set(MANCHESTER, OWLXML, FUNCTIONAL);
 
 	def expandQueryString(query: String): String = {
