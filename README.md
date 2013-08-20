@@ -1,4 +1,4 @@
 owlet
 ==========
 
-SPARQL preprocessor which replaces embedded OWL class expressions with FILTERs, using any OWL reasoner.
+**owlet** is a query expansion preprocessor for SPARQL. It parses embedded OWL class expressions and uses an OWL reasoner to replace them with FILTER statements containing the URIs of subclasses of the given class expression (or superclasses, equivalent classes, or instances)
