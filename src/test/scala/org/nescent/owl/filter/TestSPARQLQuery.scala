@@ -48,6 +48,7 @@ class TestSPARQLQuery {
 			val results = QueryExecutionFactory.create(expandedQuery, vsaoRDF).execSelect();
 			var count = 0;
 			while (results.hasNext()) {
+			  results.next();
 			  count += 1;
 			}
 			Assert.assertEquals("Should get seven results", 7, count);
