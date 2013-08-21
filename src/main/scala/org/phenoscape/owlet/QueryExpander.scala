@@ -1,4 +1,4 @@
-package org.nescent.owl.filter
+package org.phenoscape.owlet
 
 import scala.collection.JavaConversions._
 import scala.collection.Map

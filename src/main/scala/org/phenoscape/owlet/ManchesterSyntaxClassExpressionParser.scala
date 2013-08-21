@@ -1,8 +1,10 @@
-package org.nescent.owl.filter
+package org.phenoscape.owlet
 
 import scala.collection.JavaConversions._
 import scala.collection.Map
 import scala.util.parsing.combinator.RegexParsers
+
+import org.apache.log4j.Logger
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.IRI
 import org.semanticweb.owlapi.model.OWLClass
@@ -23,7 +25,6 @@ import org.semanticweb.owlapi.model.OWLObjectProperty
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom
 import org.semanticweb.owlapi.vocab.XSDVocabulary
-import org.apache.log4j.Logger
 
 object ManchesterSyntaxClassExpressionParser {
 
@@ -38,7 +39,7 @@ object ManchesterSyntaxClassExpressionParser {
 
 	private
 	class ManchesterParser(prefixes: Map[String, String]) extends RegexParsers {
-	  
+
 		private val factory = OWLManager.getOWLDataFactory();
 		// These are modified from http://www.w3.org/TR/2008/REC-rdf-sparql-query-20080115/
 		val PN_CHARS_BASE = "[A-Z]|[a-z]|[\u00C0-\u00D6]|[\u00D8-\u00F6]|[\u00F8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|[\u10000-\uEFFFF]";

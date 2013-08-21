@@ -1,10 +1,9 @@
-package org.nescent.owl.filter
+package org.phenoscape.owlet
 
 import scala.collection.JavaConversions._
 import scala.collection.Map
 import scala.xml.Elem
 import scala.xml.XML
-
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.IRI
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual

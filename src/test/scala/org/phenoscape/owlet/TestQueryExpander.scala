@@ -1,15 +1,14 @@
-package org.nescent.owl.filter
+package org.phenoscape.owlet
 
 import org.apache.jena.riot.out.EscapeStr
 import org.junit.AfterClass
+import org.junit.Assert
 import org.junit.BeforeClass
 import org.junit.Test
 import org.semanticweb.elk.owlapi.ElkReasonerFactory
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.reasoner.InferenceType
 import org.semanticweb.owlapi.reasoner.OWLReasoner
-import org.junit.runners.JUnit4
-import org.junit.Assert
 
 object TestQueryExpander {
 
@@ -87,7 +86,7 @@ class TestQueryExpander {
 			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000149"));
 			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000082"));
 			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000184"));
-			
+
 	}
 
 }

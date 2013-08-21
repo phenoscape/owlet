@@ -1,18 +1,14 @@
-package org.nescent.owl.filter
+package org.phenoscape.owlet
 
-import org.junit.AfterClass
-import org.junit.BeforeClass
+import org.junit.Assert
 import org.junit.Test
 import org.semanticweb.elk.owlapi.ElkReasonerFactory
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.reasoner.InferenceType
-import org.semanticweb.owlapi.reasoner.OWLReasoner
-import com.hp.hpl.jena.rdf.model.Model
-import com.hp.hpl.jena.util.FileManager
-import com.hp.hpl.jena.rdf.model.ModelFactory
-import com.hp.hpl.jena.query.QueryFactory
+
 import com.hp.hpl.jena.query.QueryExecutionFactory
-import org.junit.Assert
+import com.hp.hpl.jena.query.QueryFactory
+import com.hp.hpl.jena.rdf.model.ModelFactory
 
 class TestSPARQLQuery {
 
@@ -50,8 +46,8 @@ class TestSPARQLQuery {
 			val results = QueryExecutionFactory.create(expandedQuery, vsaoRDF).execSelect();
 			var count = 0;
 			while (results.hasNext()) {
-			  results.next();
-			  count += 1;
+				results.next();
+				count += 1;
 			}
 			Assert.assertEquals("Should get seven results", 7, count);
 			reasoner.dispose();
