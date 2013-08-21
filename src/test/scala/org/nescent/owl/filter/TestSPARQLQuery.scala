@@ -44,6 +44,8 @@ class TestSPARQLQuery {
 					""";
 			val expander = new QueryExpander(reasoner);
 			val query = QueryFactory.create(queryText);
+			val unexpandedResults = QueryExecutionFactory.create(query, vsaoRDF).execSelect();
+			Assert.assertFalse("Shouldn't get any results before expansion", unexpandedResults.hasNext());
 			val expandedQuery = expander.expandQuery(query);
 			val results = QueryExecutionFactory.create(expandedQuery, vsaoRDF).execSelect();
 			var count = 0;
