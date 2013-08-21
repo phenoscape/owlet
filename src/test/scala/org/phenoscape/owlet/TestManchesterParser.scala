@@ -37,14 +37,23 @@ class TestManchesterParser {
 			Assert.assertEquals(factory.getOWLObjectUnionOf(head, muscle), parsed5);
 
 			val parsed6 = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> and <http://example.org/part_of> some <http://example.org/head>").get;
+			Assert.assertEquals(factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectSomeValuesFrom(part_of, head)), parsed6);
 
 			val parsed7 = ManchesterSyntaxClassExpressionParser.parse("not <http://example.org/muscle> and <http://example.org/part_of> some <http://example.org/head>").get;
+			Assert.assertEquals(factory.getOWLObjectIntersectionOf(factory.getOWLObjectComplementOf(muscle), factory.getOWLObjectSomeValuesFrom(part_of, head)), parsed7);
 
 			val parsed8 = ManchesterSyntaxClassExpressionParser.parse("ex:head and not (ex:part_of some ex:eye)", Map("ex" -> "http://example.org/")).get;
+			Assert.assertEquals(factory.getOWLObjectIntersectionOf(head, factory.getOWLObjectComplementOf(factory.getOWLObjectSomeValuesFrom(part_of, eye))), parsed8);
 
 			val parsed9 = ManchesterSyntaxClassExpressionParser.parse("not(ex:head)", Map("ex" -> "http://example.org/")).get;
+			Assert.assertEquals(factory.getOWLObjectComplementOf(head), parsed9);
 
 			val parsed10 = ManchesterSyntaxClassExpressionParser.parse("(ex:head or ex:cell) and not(ex:nucleus) and ex:part_of some (ex:eye or ex:muscle)", Map("ex" -> "http://example.org/")).get;
+			val built10 = factory.getOWLObjectIntersectionOf(
+					factory.getOWLObjectUnionOf(head, cell), 
+					factory.getOWLObjectComplementOf(nucleus), 
+					factory.getOWLObjectSomeValuesFrom(part_of, factory.getOWLObjectUnionOf(eye, muscle)));
+			Assert.assertEquals(built10, parsed10);
 
 			val parsed11 = ManchesterSyntaxClassExpressionParser.parse("ex:cell and ex:has_part max 1 ex:nucleus or ex:eye", Map("ex" -> "http://example.org/")).get;
 			val built11 = factory.getOWLObjectUnionOf(
