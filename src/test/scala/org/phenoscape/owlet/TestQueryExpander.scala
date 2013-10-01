@@ -12,33 +12,33 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner
 
 object TestQueryExpander {
 
-	; var reasoner: OWLReasoner = null;
+  ; var reasoner: OWLReasoner = null;
 
-	@BeforeClass
-	def setupReasoner(): Unit = {
-			val manager = OWLManager.createOWLOntologyManager();
-			val vsaoStream = getClass().getClassLoader().getResourceAsStream("vsao.owl");
-			val vsao = manager.loadOntologyFromOntologyDocument(vsaoStream);
-			reasoner = new ElkReasonerFactory().createReasoner(vsao);
-			reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
-	}
+  @BeforeClass
+  def setupReasoner(): Unit = {
+    val manager = OWLManager.createOWLOntologyManager();
+    val vsaoStream = getClass().getClassLoader().getResourceAsStream("vsao.owl");
+    val vsao = manager.loadOntologyFromOntologyDocument(vsaoStream);
+    reasoner = new ElkReasonerFactory().createReasoner(vsao);
+    reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+  }
 
-	@AfterClass
-	def disposeReasoner(): Unit = {
-			reasoner.dispose();
-	}
+  @AfterClass
+  def disposeReasoner(): Unit = {
+    reasoner.dispose();
+  }
 
 }
 
 class TestQueryExpander {
 
-	@Test
-	def testQueryExpander(): Unit = {
-			val expander = new QueryExpander(TestQueryExpander.reasoner);
+  @Test
+  def testQueryExpander(): Unit = {
+    val expander = new QueryExpander(TestQueryExpander.reasoner);
 
-			val xmlExpression = <ObjectSomeValuesFrom><ObjectProperty abbreviatedIRI="part_of:"/><Class abbreviatedIRI="axial_skeleton:"/></ObjectSomeValuesFrom>;
-			val xmlExpressionText = EscapeStr.stringEsc(xmlExpression.toString());
-			val xmlQuery = """
+    val xmlExpression = <ObjectSomeValuesFrom><ObjectProperty abbreviatedIRI="part_of:"/><Class abbreviatedIRI="axial_skeleton:"/></ObjectSomeValuesFrom>;
+    val xmlExpressionText = EscapeStr.stringEsc(xmlExpression.toString());
+    val xmlQuery = """
 					PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 					PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -57,10 +57,10 @@ class TestQueryExpander {
 					}
 					""".format(xmlExpressionText);
 
-			println(xmlQuery);
-			expander.expandQueryString(xmlQuery);
+    println(xmlQuery);
+    expander.expandQueryString(xmlQuery);
 
-			val manchesterQuery = """
+    val manchesterQuery = """
 					PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 					PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -78,19 +78,19 @@ class TestQueryExpander {
 					?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^ow:omn .
 					}
 					""";
-			val expandedQuery = expander.expandQueryString(manchesterQuery);
-			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000093"));
-			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000049"));
-			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000183"));
-			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000185"));
-			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000149"));
-			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000082"));
-			Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000184"));
-	}
+    val expandedQuery = expander.expandQueryString(manchesterQuery);
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000093"));
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000049"));
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000183"));
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000185"));
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000149"));
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000082"));
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000184"));
+  }
 
-	@Test
-	def testforNullPointerExceptionWithPropertyPaths(): Unit = {
-			val query = """
+  @Test
+  def testForNullPointerExceptionWithPropertyPaths(): Unit = {
+    val query = """
 					PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 					PREFIX dc: <http://purl.org/dc/elements/1.1/>
@@ -132,9 +132,30 @@ class TestQueryExpander {
 					?taxon rdfs:label ?taxon_label .
 					?taxon rdfs:subClassOf* Sarcopterygii: .
 					}""";
-			val expander = new QueryExpander(TestQueryExpander.reasoner);
-			val expandedQuery = expander.expandQueryString(query);
-			println(expandedQuery);
-	}
+    val expander = new QueryExpander(TestQueryExpander.reasoner);
+    val expandedQuery = expander.expandQueryString(query);
+    println(expandedQuery);
+  }
+
+  @Test
+  def testForPNotAURINode(): Unit = {
+    val query = """
+    			PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    			PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    			PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+    			PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+    			PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    			PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    			PREFIX dc:   <http://purl.org/dc/elements/1.1/>
+    			SELECT ?s ?p ?o
+    			WHERE {
+    				?s ?p ?o
+    			}
+    			LIMIT 10
+    			"""
+    val expander = new QueryExpander(TestQueryExpander.reasoner);
+    val expandedQuery = expander.expandQueryString(query);
+    println(expandedQuery);
+  }
 
 }
