@@ -3,7 +3,6 @@ package org.phenoscape.owlet
 import scala.collection.JavaConversions._
 import scala.collection.Map
 import scala.collection.Set
-
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.OWLClass
 import org.semanticweb.owlapi.model.OWLClassExpression
@@ -11,7 +10,6 @@ import org.semanticweb.owlapi.model.OWLEntity
 import org.semanticweb.owlapi.model.OWLNamedIndividual
 import org.semanticweb.owlapi.reasoner.OWLReasoner
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary
-
 import com.hp.hpl.jena.graph.NodeFactory
 import com.hp.hpl.jena.graph.Node_Literal
 import com.hp.hpl.jena.graph.Node_Variable
@@ -26,6 +24,7 @@ import com.hp.hpl.jena.sparql.syntax.ElementGroup
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock
 import com.hp.hpl.jena.sparql.syntax.ElementVisitorBase
 import com.hp.hpl.jena.sparql.syntax.ElementWalker
+import com.hp.hpl.jena.query.Syntax
 
 /**
  * Processes SPARQL queries containing triple patterns with embedded OWL class expressions. 
@@ -65,8 +64,9 @@ class QueryExpander(reasoner: OWLReasoner) {
 			for (pathBlock <- group.getElements().filter(_.isInstanceOf[ElementPathBlock]).map(_.asInstanceOf[ElementPathBlock])) {
 				val patterns = pathBlock.getPattern().iterator();
 				for (pattern <- patterns) {
+					val predicateURI = Option(pattern.getPredicate()).map(_.getURI()).getOrElse(null); //predicate is null if property path
 					val filterOpt = 
-							(pattern.getSubject(), pattern.getPredicate().getURI(), pattern.getObject()) match {
+							(pattern.getSubject(), predicateURI, pattern.getObject()) match {
 							case (variable: Node_Variable, 
 									SUBCLASS_OF, 
 									expression: Node_Literal) if SYNTAXES(expression.getLiteralDatatypeURI()) => 

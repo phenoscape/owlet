@@ -1,3 +1,4 @@
 target
 .cache
 src/test/resources/catalog-v001.xml
+.DS_Store
