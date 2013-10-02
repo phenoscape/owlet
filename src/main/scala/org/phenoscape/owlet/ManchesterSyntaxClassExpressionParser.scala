@@ -148,7 +148,7 @@ object ManchesterSyntaxClassExpressionParser {
 
 		def parseExpression(expression: String): Option[OWLClassExpression] = {
 				parseAll(description, expression) match {
-				case success: Success[OWLClassExpression] => Option(success.get);
+				case success: Success[_] => Option(success.get);
 				case failure: NoSuccess => {
 					logger.error("Failed to parse class expression: " + failure.toString());
 					None;
