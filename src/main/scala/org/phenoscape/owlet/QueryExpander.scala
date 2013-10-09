@@ -123,16 +123,31 @@ class QueryExpander(reasoner: OWLReasoner) {
   }
 
   private def querySubClasses(expression: OWLClassExpression): Set[OWLClass] = {
-    reasoner.getSubClasses(expression, false).getFlattened();
+    val subclasses = reasoner.getSubClasses(expression, false).getFlattened()
+    if (!expression.isAnonymous()) {
+      subclasses + expression.asOWLClass()
+    } else {
+      subclasses
+    }
+
   }
 
   private def queryEquivalentClasses(expression: OWLClassExpression): Set[OWLClass] = {
-    reasoner.getEquivalentClasses(expression).getEntities();
+    val equivalents = reasoner.getEquivalentClasses(expression).getEntities()
+    if (!expression.isAnonymous()) {
+      equivalents + expression.asOWLClass()
+    } else {
+      equivalents
+    }
   }
 
   private def querySuperClasses(expression: OWLClassExpression): Set[OWLClass] = {
-    reasoner.getSuperClasses(expression, false).getFlattened();
-
+    val superclasses = reasoner.getSuperClasses(expression, false).getFlattened()
+    if (!expression.isAnonymous()) {
+      superclasses + expression.asOWLClass()
+    } else {
+      superclasses
+    }
   }
 
   private def queryIndividuals(expression: OWLClassExpression): Set[OWLNamedIndividual] = {
