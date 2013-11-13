@@ -12,20 +12,20 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner
 
 object TestQueryExpander {
 
-  ; var reasoner: OWLReasoner = null;
+  var reasoner: OWLReasoner = null
 
   @BeforeClass
   def setupReasoner(): Unit = {
-    val manager = OWLManager.createOWLOntologyManager();
-    val vsaoStream = getClass().getClassLoader().getResourceAsStream("vsao.owl");
-    val vsao = manager.loadOntologyFromOntologyDocument(vsaoStream);
-    reasoner = new ElkReasonerFactory().createReasoner(vsao);
-    reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+    val manager = OWLManager.createOWLOntologyManager()
+    val vsaoStream = this.getClass.getClassLoader.getResourceAsStream("vsao.owl")
+    val vsao = manager.loadOntologyFromOntologyDocument(vsaoStream)
+    reasoner = new ElkReasonerFactory().createReasoner(vsao)
+    reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY)
   }
 
   @AfterClass
   def disposeReasoner(): Unit = {
-    reasoner.dispose();
+    reasoner.dispose()
   }
 
 }
@@ -34,10 +34,10 @@ class TestQueryExpander {
 
   @Test
   def testQueryExpander(): Unit = {
-    val expander = new QueryExpander(TestQueryExpander.reasoner);
+    val expander = new QueryExpander(TestQueryExpander.reasoner)
 
-    val xmlExpression = <ObjectSomeValuesFrom><ObjectProperty abbreviatedIRI="part_of:"/><Class abbreviatedIRI="axial_skeleton:"/></ObjectSomeValuesFrom>;
-    val xmlExpressionText = EscapeStr.stringEsc(xmlExpression.toString());
+    val xmlExpression = <ObjectSomeValuesFrom><ObjectProperty abbreviatedIRI="part_of:"/><Class abbreviatedIRI="axial_skeleton:"/></ObjectSomeValuesFrom>
+    val xmlExpressionText = EscapeStr.stringEsc(xmlExpression.toString())
     val xmlQuery = """
 					PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -55,10 +55,10 @@ class TestQueryExpander {
 					?part rdf:type ?structure .
 					?structure rdfs:subClassOf "%s"^^ow:owx .
 					}
-					""".format(xmlExpressionText);
+					""".format(xmlExpressionText)
 
-    println(xmlQuery);
-    expander.expandQueryString(xmlQuery);
+    println(xmlQuery)
+    expander.expandQueryString(xmlQuery)
 
     val manchesterQuery = """
 					PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -77,15 +77,15 @@ class TestQueryExpander {
 					?part rdf:type ?structure .
 					?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^ow:omn .
 					}
-					""";
-    val expandedQuery = expander.expandQueryString(manchesterQuery);
-    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000093"));
-    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000049"));
-    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000183"));
-    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000185"));
-    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000149"));
-    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000082"));
-    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000184"));
+					"""
+    val expandedQuery = expander.expandQueryString(manchesterQuery)
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000093"))
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000049"))
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000183"))
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000185"))
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000149"))
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000082"))
+    Assert.assertTrue("Filter should contain term with identifier", expandedQuery.contains("0000184"))
   }
 
   @Test
@@ -131,10 +131,10 @@ class TestQueryExpander {
 					?otu has_external_reference: ?taxon .
 					?taxon rdfs:label ?taxon_label .
 					?taxon rdfs:subClassOf* Sarcopterygii: .
-					}""";
-    val expander = new QueryExpander(TestQueryExpander.reasoner);
-    val expandedQuery = expander.expandQueryString(query);
-    println(expandedQuery);
+					}"""
+    val expander = new QueryExpander(TestQueryExpander.reasoner)
+    val expandedQuery = expander.expandQueryString(query)
+    println(expandedQuery)
   }
 
   @Test
@@ -153,9 +153,9 @@ class TestQueryExpander {
     			}
     			LIMIT 10
     			"""
-    val expander = new QueryExpander(TestQueryExpander.reasoner);
-    val expandedQuery = expander.expandQueryString(query);
-    println(expandedQuery);
+    val expander = new QueryExpander(TestQueryExpander.reasoner)
+    val expandedQuery = expander.expandQueryString(query)
+    println(expandedQuery)
   }
 
 }

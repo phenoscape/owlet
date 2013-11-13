@@ -28,7 +28,7 @@ import org.semanticweb.owlapi.model.OWLObjectUnionOf
 
 object OWLXMLClassExpressionParser {
 
-	val factory = OWLManager.getOWLDataFactory();
+	val factory = OWLManager.getOWLDataFactory
 
 	; case class ObjectRestriction(property: OWLObjectPropertyExpression, filler: Option[OWLClassExpression]);
 
@@ -188,7 +188,7 @@ object OWLXMLClassExpressionParser {
 	def expandAbbreviatedIRI(value: String, prefixes: Map[String, String]): String = {
 			val segments = value.split(":", 2);
 			val localName = if (segments.size > 1) segments(1) else "";
-			return prefixes(segments(0)) + localName;
+			prefixes(segments(0)) + localName;
 	}
 
 	def children(element: Elem): Seq[Elem] = {
