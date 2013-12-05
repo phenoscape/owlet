@@ -47,7 +47,7 @@ object ManchesterSyntaxClassExpressionParser {
     val PN_CHARS = """%s|\-|[0-9]|\u00B7|[\u0300-\u036F]|[\u203F-\u2040]""".format(PN_CHARS_U)
     val PN_PREFIX = """(%s)((%s|\.)*(%s))?""".format(PN_CHARS_BASE, PN_CHARS, PN_CHARS)
     val PN_LOCAL = """(%s|[0-9])((%s|\.)*(%s))?""".format(PN_CHARS_U, PN_CHARS, PN_CHARS)
-    val PNAME_NS = """(%s)?:""".format(PN_PREFIX)
+    val PNAME_NS = """((%s)??):""".format(PN_PREFIX)
     val PNAME_LN = "%s(%s)*".format(PNAME_NS, PN_LOCAL)
 
     // From http://www.artefarita.com/journel/post/2013/05/23/An-IRI-pattern-for-Java:
