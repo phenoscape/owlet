@@ -3,7 +3,9 @@ package org.phenoscape.owlet
 import org.junit.Assert
 import org.junit.Test
 import org.semanticweb.owlapi.apibinding.OWLManager
-import org.semanticweb.owlapi.model.{ IRI, OWLClass }
+import org.semanticweb.owlapi.model.IRI
+import org.semanticweb.owlapi.model.OWLClass
+import org.semanticweb.owlapi.model.OWLClassExpression
 
 class TestManchesterParser {
 
@@ -67,6 +69,14 @@ class TestManchesterParser {
     val prefixes = Map("" -> "http://purl.obolibrary.org/obo/")
     val parsed = ManchesterSyntaxClassExpressionParser.parse(":UBERONTEMP_18a5dd1b-1213-471f-9a0b-06190b1ecf2c", prefixes)
     Assert.assertTrue(parsed.get.isInstanceOf[OWLClass]) // problem is that parsing never returns
+  }
+
+  @Test
+  def testPrefixError(): Unit = {
+    val prefixes = Map("" -> "http://purl.obolibrary.org/obo/")
+    val expression = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> some <http://purl.obolibrary.org/obo/UBERON_0000981>"
+    val parsed = ManchesterSyntaxClassExpressionParser.parse(expression, prefixes)
+    Assert.assertTrue(parsed.get.isInstanceOf[OWLClassExpression])
   }
 
 }
