@@ -8,7 +8,7 @@ owlet
 ## Installation
 owlet is not yet available from an online Maven repository. To use it in your project you will need to:
 
-1. Check out the code, e.g. `git clone https://github.com/phenoscape/owlet.git`
+1. Check out the code, e.g. run `git clone https://github.com/phenoscape/owlet.git` on the command line.
 2. Run `mvn install` to build the jar and add to your local Maven repository.
 3. Add the owlet dependency to your `pom.xml`: 
 
@@ -21,7 +21,7 @@ owlet is not yet available from an online Maven repository. To use it in your pr
 ```
 
 ## Usage
-Here is an example of loading an ontology into an OWL reasoner, and using it to expand a query to an in-memory triple store containing the same ontology. Instead of the in-memory Jena model, you could instead query a remote SPARQL endpoint.
+Below is an example of loading an ontology from a file into an OWL reasoner, and then using the reasoner to expand a SPARQL query to triple store. In this example, the triple store is in-memory and holds the same ontology as the reasoner, but you could replace that part with querying a remote SPARQL endpoint that, for example, contains data linked to the ontology.
 
 ```scala
 import org.semanticweb.elk.owlapi.ElkReasonerFactory
