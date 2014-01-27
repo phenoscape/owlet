@@ -11,6 +11,7 @@ owlet is not yet available from an online Maven repository. To use it in your pr
 - Check out the code, e.g. `git clone https://github.com/phenoscape/owlet.git`
 - Run `mvn install` to build the jar and add to your local Maven repository.
 - Add the owlet dependency to your `pom.xml`: 
+
 ```xml
 <dependency>
 			<groupId>org.phenoscape</groupId>
@@ -18,4 +19,7 @@ owlet is not yet available from an online Maven repository. To use it in your pr
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 ```
+
+## Usage
+
 More documentation can be found on the [owlet wiki](https://github.com/phenoscape/owlet/wiki).
