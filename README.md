@@ -20,6 +20,22 @@ owlet is not yet available from an online Maven repository. To use it in your pr
 </dependency>
 ```
 
+## How does it work
+The OWL class expression to be expanded is a string literal at an appropriate location in a SPARQL query. The query expander recognizes the literal containing the class expression by its datatype, which must be `http://purl.org/owlet/#omn`. [Datatypes of literals in SPARQL] are assigned using the `^^TypeURI` suffix notation (where `TypeURI` is the URI of the datatype; URI prefixes are allowed).
+
+The literal containing the class expression must be in one of the following 3 triple patterns (with `rdf`, `rdfs`, `owl` declared [as in prefix.cc], and `owlet` as `<http://purl.org/owlet/#>`):
+
+1. Subclass triple: `?x rdfs:subClassOf "owl:Thing"^^owlet:omn`
+2. instance-of triple: `?x rdf:type "owl:Thing"^^owlet:omn`
+3. equivalent class triple: `?x owl:equivalentClass "owl:Thing"^^owlet:omn`
+
+Each of these triples will be rewritten by the expander in the following pattern:
+```
+FILTER(?x IN (<URI1>,<URI2>,<URI3>,...)
+```
+where `<URI1>,<URI2>,<URI3>,...` is the list of class or instance identifiers that satisfy the OWL class expression, as determined by the reasoner.
+
+
 ## Usage
 Below is an example of loading an ontology from a file into an OWL reasoner, and then using the reasoner to expand a SPARQL query to a triple store. In this example, the triple store is in-memory and holds the same ontology as the reasoner, but you could replace that part with querying a remote SPARQL endpoint that, for example, contains data linked to the ontology.
 
@@ -60,3 +76,5 @@ val results = QueryExecutionFactory.create(expandedQuery, vsaoRDF).execSelect()
 More documentation can be found on the [owlet wiki](https://github.com/phenoscape/owlet/wiki).
 
 [Manchester Syntax]: http://www.w3.org/TR/owl2-manchester-syntax/
+[Datatypes of literals in SPARQL]: http://www.w3.org/TR/sparql11-query/#QSynLiterals
+[as in prefix.cc]: http://prefix.cc/rdf,rdfs,owl
