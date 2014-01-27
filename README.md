@@ -31,7 +31,7 @@ The literal containing the class expression must be in one of the following 3 tr
 
 Each of these triples will be rewritten by the expander in the following pattern:
 ```
-FILTER(?x IN (<URI1>,<URI2>,<URI3>,...)
+FILTER(?x IN (<URI1>,<URI2>,<URI3>,...))
 ```
 where `<URI1>,<URI2>,<URI3>,...` is the list of class or instance identifiers that satisfy the OWL class expression, as determined by the reasoner.
 
