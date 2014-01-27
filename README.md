@@ -21,7 +21,7 @@ owlet is not yet available from an online Maven repository. To use it in your pr
 ```
 
 ## Usage
-Below is an example of loading an ontology from a file into an OWL reasoner, and then using the reasoner to expand a SPARQL query to triple store. In this example, the triple store is in-memory and holds the same ontology as the reasoner, but you could replace that part with querying a remote SPARQL endpoint that, for example, contains data linked to the ontology.
+Below is an example of loading an ontology from a file into an OWL reasoner, and then using the reasoner to expand a SPARQL query to a triple store. In this example, the triple store is in-memory and holds the same ontology as the reasoner, but you could replace that part with querying a remote SPARQL endpoint that, for example, contains data linked to the ontology.
 
 ```scala
 import org.semanticweb.elk.owlapi.ElkReasonerFactory
