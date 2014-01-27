@@ -116,7 +116,7 @@ object QueryExpander {
   val SUBCLASS_OF = OWLRDFVocabulary.RDFS_SUBCLASS_OF.getIRI.toString
   val EQUIVALENT_CLASS = OWLRDFVocabulary.OWL_EQUIVALENT_CLASS.getIRI.toString
   val TYPE = OWLRDFVocabulary.RDF_TYPE.getIRI.toString
-  val OWLET_NS = "http://purl.org/phenoscape/owlet/syntax#"
+  val OWLET_NS = "http://purl.org/owlet/#"
   val MANCHESTER = OWLET_NS + "omn"
   val OWLXML = OWLET_NS + "owx"
   val FUNCTIONAL = OWLET_NS + "ofn"
