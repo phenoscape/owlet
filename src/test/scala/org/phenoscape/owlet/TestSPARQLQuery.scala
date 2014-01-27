@@ -26,7 +26,7 @@ class TestSPARQLQuery {
 			reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY)
 			val queryText = """
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-					PREFIX ow: <http://purl.org/phenoscape/owlet/syntax#>
+					PREFIX ow: <http://purl.org/owlet/#>
 					PREFIX axial_skeleton: <http://purl.obolibrary.org/obo/VSAO_0000056>
 					PREFIX definition: <http://purl.obolibrary.org/obo/IAO_0000115>
 					PREFIX part_of: <http://purl.obolibrary.org/obo/BFO_0000050>
