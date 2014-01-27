@@ -43,7 +43,7 @@ class TestQueryExpander {
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 					PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 					PREFIX owl: <http://www.w3.org/2002/07/owl#>
-					PREFIX ow: <http://purl.org/phenoscape/owlet/syntax#>
+					PREFIX ow: <http://purl.org/owlet/#>
 					PREFIX vsao: <http://purl.obolibrary.org/obo/VSAO_>
 					PREFIX axial_skeleton: <http://purl.obolibrary.org/obo/VSAO_0000056>
 					PREFIX part_of: <http://purl.obolibrary.org/obo/BFO_0000050>
@@ -65,7 +65,7 @@ class TestQueryExpander {
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 					PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 					PREFIX owl: <http://www.w3.org/2002/07/owl#>
-					PREFIX ow: <http://purl.org/phenoscape/owlet/syntax#>
+					PREFIX ow: <http://purl.org/owlet/#>
 					PREFIX vsao: <http://purl.obolibrary.org/obo/VSAO_>
 					PREFIX axial_skeleton: <http://purl.obolibrary.org/obo/VSAO_0000056>
 					PREFIX part_of: <http://purl.obolibrary.org/obo/BFO_0000050>
@@ -96,7 +96,7 @@ class TestQueryExpander {
 					PREFIX dc: <http://purl.org/dc/elements/1.1/>
 					PREFIX obo: <http://purl.obolibrary.org/obo/>
 					PREFIX ps: <http://purl.org/phenoscape/vocab/>
-					PREFIX ow: <http://purl.org/phenoscape/owlet/syntax#>
+					PREFIX ow: <http://purl.org/owlet/#>
 					PREFIX StandardState: <http://purl.obolibrary.org/obo/CDAO_0000045>
 					PREFIX has_character: <http://purl.obolibrary.org/obo/CDAO_0000142>
 					PREFIX has_state: <http://purl.obolibrary.org/obo/CDAO_0000184>
