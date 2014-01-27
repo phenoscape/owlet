@@ -39,7 +39,7 @@ val rdfModel = ModelFactory.createDefaultModel()
 rdfModel.read("my_ontology.owl")
 val queryText = """
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX ow: <http://purl.org/phenoscape/owlet/syntax#>
+PREFIX owlet: <http://purl.org/owlet/#>
 PREFIX axial_skeleton: <http://purl.obolibrary.org/obo/VSAO_0000056>
 PREFIX definition: <http://purl.obolibrary.org/obo/IAO_0000115>
 PREFIX part_of: <http://purl.obolibrary.org/obo/BFO_0000050>
@@ -48,7 +48,7 @@ WHERE
 {
   ?structure rdfs:label ?label .
   ?structure definition: ?definition .
-  ?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^ow:omn .
+  ?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^owlet:omn .
 }
   """
 val expander = new QueryExpander(reasoner)
