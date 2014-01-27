@@ -5,4 +5,17 @@ owlet
 
 **owlet** is written in Scala but can be used in any Java application.
 
+## Installation
+owlet is not yet available from an online Maven repository. To use it in your project you will need to:
+
+- Check out the code, e.g. `git clone https://github.com/phenoscape/owlet.git`
+- Run `mvn install` to build the jar and add to your local Maven repository.
+- Add the owlet dependency to your `pom.xml`: 
+```xml
+<dependency>
+			<groupId>org.phenoscape</groupId>
+			<artifactId>owlet</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+```
 More documentation can be found on the [owlet wiki](https://github.com/phenoscape/owlet/wiki).
