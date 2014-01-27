@@ -8,16 +8,16 @@ owlet
 ## Installation
 owlet is not yet available from an online Maven repository. To use it in your project you will need to:
 
-- Check out the code, e.g. `git clone https://github.com/phenoscape/owlet.git`
-- Run `mvn install` to build the jar and add to your local Maven repository.
-- Add the owlet dependency to your `pom.xml`: 
+1. Check out the code, e.g. `git clone https://github.com/phenoscape/owlet.git`
+2. Run `mvn install` to build the jar and add to your local Maven repository.
+3. Add the owlet dependency to your `pom.xml`: 
 
 ```xml
 <dependency>
-			<groupId>org.phenoscape</groupId>
-			<artifactId>owlet</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
+  <groupId>org.phenoscape</groupId>
+  <artifactId>owlet</artifactId>
+  <version>1.0-SNAPSHOT</version>
+</dependency>
 ```
 
 ## Usage
