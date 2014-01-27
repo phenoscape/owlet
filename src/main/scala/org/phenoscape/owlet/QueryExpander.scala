@@ -32,15 +32,6 @@ import com.hp.hpl.jena.graph.Node_URI
  */
 class QueryExpander(reasoner: OWLReasoner) {
 
-  val SUBCLASS_OF = OWLRDFVocabulary.RDFS_SUBCLASS_OF.getIRI.toString
-  val EQUIVALENT_CLASS = OWLRDFVocabulary.OWL_EQUIVALENT_CLASS.getIRI.toString
-  val TYPE = OWLRDFVocabulary.RDF_TYPE.getIRI.toString
-  val OWLET_NS = "http://purl.org/phenoscape/owlet/syntax#"
-  val MANCHESTER = OWLET_NS + "omn"
-  val OWLXML = OWLET_NS + "owx"
-  val FUNCTIONAL = OWLET_NS + "ofn"
-  val SYNTAXES = Set(MANCHESTER, OWLXML, FUNCTIONAL)
-
   def expandQueryString(query: String): String = {
     val parsedQuery = QueryFactory.create(query)
     expandQuery(parsedQuery).toString
@@ -63,25 +54,25 @@ class QueryExpander(reasoner: OWLReasoner) {
         val predicateURI = Option(pattern.getPredicate).collect({ case uri: Node_URI => uri.getURI }).getOrElse(null) //predicate is null if property path
         val filterOpt = (pattern.getSubject, predicateURI, pattern.getObject) match {
           case (variable: Node_Variable,
-            SUBCLASS_OF,
-            expression: Node_Literal) if SYNTAXES(expression.getLiteralDatatypeURI) =>
-            runQueryAndMakeFilter(querySubClasses, expression, prefixes, variable)
+            QueryExpander.SUBCLASS_OF,
+            expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+            QueryExpander.runQueryAndMakeFilter(querySubClasses, expression, prefixes, variable)
           case (expression: Node_Literal,
-            SUBCLASS_OF,
-            variable: Node_Variable) if SYNTAXES(expression.getLiteralDatatypeURI) =>
-            runQueryAndMakeFilter(querySuperClasses, expression, prefixes, variable)
+            QueryExpander.SUBCLASS_OF,
+            variable: Node_Variable) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+            QueryExpander.runQueryAndMakeFilter(querySuperClasses, expression, prefixes, variable)
           case (variable: Node_Variable,
-            EQUIVALENT_CLASS,
-            expression: Node_Literal) if SYNTAXES(expression.getLiteralDatatypeURI) =>
-            runQueryAndMakeFilter(queryEquivalentClasses, expression, prefixes, variable)
+            QueryExpander.EQUIVALENT_CLASS,
+            expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+            QueryExpander.runQueryAndMakeFilter(queryEquivalentClasses, expression, prefixes, variable)
           case (expression: Node_Literal,
-            EQUIVALENT_CLASS,
-            variable: Node_Variable) if SYNTAXES(expression.getLiteralDatatypeURI) =>
-            runQueryAndMakeFilter(queryEquivalentClasses, expression, prefixes, variable)
+            QueryExpander.EQUIVALENT_CLASS,
+            variable: Node_Variable) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+            QueryExpander.runQueryAndMakeFilter(queryEquivalentClasses, expression, prefixes, variable)
           case (variable: Node_Variable,
-            TYPE,
-            expression: Node_Literal) if SYNTAXES(expression.getLiteralDatatypeURI) =>
-            runQueryAndMakeFilter(queryIndividuals, expression, prefixes, variable)
+            QueryExpander.TYPE,
+            expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+            QueryExpander.runQueryAndMakeFilter(queryIndividuals, expression, prefixes, variable)
           case _ => None
         }
         for (filter <- filterOpt) {
@@ -91,31 +82,6 @@ class QueryExpander(reasoner: OWLReasoner) {
       }
     }
   }
-
-  private def runQueryAndMakeFilter(queryFunction: (OWLClassExpression => Set[_ <: OWLEntity]), classExpression: Node_Literal, prefixes: Map[String, String], variable: Node_Variable): Option[ElementFilter] = {
-    val parsedExpression = parseExpression(classExpression, prefixes)
-    parsedExpression match {
-      case Some(expression) => Option(makeFilter(variable, queryFunction(expression)))
-      case None => None
-    }
-  }
-
-  def makeFilter(variable: Node_Variable, classes: Iterable[OWLEntity]): ElementFilter = {
-    val nodes = classes.map(term => new NodeValueNode(NodeFactory.createURI(term.getIRI.toString)))
-    val oneOf = new E_OneOf(new ExprVar(variable), new ExprList(nodes.toList))
-    new ElementFilter(oneOf)
-  }
-
-  def parseExpression(literal: Node_Literal, prefixes: Map[String, String]): Option[OWLClassExpression] = {
-    val expression = literal.getLiteralLexicalForm
-    literal.getLiteralDatatypeURI match {
-      case MANCHESTER => ManchesterSyntaxClassExpressionParser.parse(expression, prefixes)
-      case OWLXML => OWLXMLClassExpressionParser.parse(expression, prefixes)
-      case FUNCTIONAL => parseFunctional(expression, prefixes)
-    }
-  }
-
-  private def parseFunctional(expression: String, prefixes: Map[String, String]): Option[OWLClassExpression] = ???
 
   private def querySubClasses(expression: OWLClassExpression): Set[OWLClass] = {
     val subclasses = reasoner.getSubClasses(expression, false).getFlattened
@@ -142,5 +108,43 @@ class QueryExpander(reasoner: OWLReasoner) {
   }
 
   private def queryIndividuals(expression: OWLClassExpression): Set[OWLNamedIndividual] = reasoner.getInstances(expression, false).getFlattened
+
+}
+
+object QueryExpander {
+
+  val SUBCLASS_OF = OWLRDFVocabulary.RDFS_SUBCLASS_OF.getIRI.toString
+  val EQUIVALENT_CLASS = OWLRDFVocabulary.OWL_EQUIVALENT_CLASS.getIRI.toString
+  val TYPE = OWLRDFVocabulary.RDF_TYPE.getIRI.toString
+  val OWLET_NS = "http://purl.org/phenoscape/owlet/syntax#"
+  val MANCHESTER = OWLET_NS + "omn"
+  val OWLXML = OWLET_NS + "owx"
+  val FUNCTIONAL = OWLET_NS + "ofn"
+  val SYNTAXES = Set(MANCHESTER, OWLXML, FUNCTIONAL)
+
+  def runQueryAndMakeFilter(queryFunction: (OWLClassExpression => Set[_ <: OWLEntity]), classExpression: Node_Literal, prefixes: Map[String, String], variable: Node_Variable): Option[ElementFilter] = {
+    val parsedExpression = parseExpression(classExpression, prefixes)
+    parsedExpression match {
+      case Some(expression) => Option(makeFilter(variable, queryFunction(expression)))
+      case None => None
+    }
+  }
+
+  def parseExpression(literal: Node_Literal, prefixes: Map[String, String]): Option[OWLClassExpression] = {
+    val expression = literal.getLiteralLexicalForm
+    literal.getLiteralDatatypeURI match {
+      case MANCHESTER => ManchesterSyntaxClassExpressionParser.parse(expression, prefixes)
+      case OWLXML => OWLXMLClassExpressionParser.parse(expression, prefixes)
+      case FUNCTIONAL => parseFunctional(expression, prefixes)
+    }
+  }
+
+  private def parseFunctional(expression: String, prefixes: Map[String, String]): Option[OWLClassExpression] = ???
+
+  def makeFilter(variable: Node_Variable, classes: Iterable[OWLEntity]): ElementFilter = {
+    val nodes = classes.map(term => new NodeValueNode(NodeFactory.createURI(term.getIRI.toString)))
+    val oneOf = new E_OneOf(new ExprVar(variable), new ExprList(nodes.toList))
+    new ElementFilter(oneOf)
+  }
 
 }
