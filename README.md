@@ -21,6 +21,7 @@ owlet is not yet available from an online Maven repository. To use it in your pr
 ```
 
 ## Usage
+Here is an example of loading an ontology into an OWL reasoner, and using it to expand a query to an in-memory triple store containing the same ontology. Instead of the in-memory Jena model, you could instead query a remote SPARQL endpoint.
 
 ```scala
 import org.semanticweb.elk.owlapi.ElkReasonerFactory
