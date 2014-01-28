@@ -54,7 +54,7 @@ WHERE
 val expander = new QueryExpander(reasoner)
 val query = QueryFactory.create(queryText)
 val expandedQuery = expander.expandQuery(query)
-val results = QueryExecutionFactory.create(expandedQuery, vsaoRDF).execSelect()
+val results = QueryExecutionFactory.create(expandedQuery, rdfModel).execSelect()
 ```
 
 More documentation can be found on the [owlet wiki](https://github.com/phenoscape/owlet/wiki).
