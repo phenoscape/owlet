@@ -46,6 +46,7 @@ import org.semanticweb.owlapi.reasoner.InferenceType
 import com.hp.hpl.jena.query.QueryExecutionFactory
 import com.hp.hpl.jena.query.QueryFactory
 import com.hp.hpl.jena.rdf.model.ModelFactory
+import org.phenoscape.owlet.QueryExpander
 
 val manager = OWLManager.createOWLOntologyManager()
 val ontology = manager.loadOntologyFromOntologyDocument(new File("my_ontology.owl"))
