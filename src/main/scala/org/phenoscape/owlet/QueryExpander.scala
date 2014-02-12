@@ -24,6 +24,12 @@ import com.hp.hpl.jena.sparql.syntax.ElementPathBlock
 import com.hp.hpl.jena.sparql.syntax.ElementVisitorBase
 import com.hp.hpl.jena.sparql.syntax.ElementWalker
 import com.hp.hpl.jena.graph.Node_URI
+import com.hp.hpl.jena.sparql.syntax.ElementExists
+import com.hp.hpl.jena.sparql.syntax.RecursiveElementVisitor
+import com.hp.hpl.jena.sparql.syntax.Element
+import com.hp.hpl.jena.sparql.core.TriplePath
+import com.hp.hpl.jena.sparql.expr.E_Exists
+import com.hp.hpl.jena.sparql.expr.ExprFunctionOp
 
 /**
  * Processes SPARQL queries containing triple patterns with embedded OWL class expressions.
@@ -39,48 +45,56 @@ class QueryExpander(reasoner: OWLReasoner) {
 
   def expandQuery(query: Query): Query = {
     val prefixMap = query.getPrefixMapping.getNsPrefixMap
-    ElementWalker.walk(query.getQueryPattern, new ElementVisitorBase() {
-      override def visit(group: ElementGroup): Unit = {
-        processElementGroup(group, prefixMap)
-      }
-    })
+
+    ElementWalker.walk(query.getQueryPattern, new SPARQLVisitor(prefixMap))
     query
   }
 
-  private def processElementGroup(group: ElementGroup, prefixes: Map[String, String]): Unit = {
-    for (pathBlock <- group.getElements.filter(_.isInstanceOf[ElementPathBlock]).map(_.asInstanceOf[ElementPathBlock])) {
-      val patterns = pathBlock.getPattern.iterator
-      for (pattern <- patterns) {
-        val predicateURI = Option(pattern.getPredicate).collect({ case uri: Node_URI => uri.getURI }).getOrElse(null) //predicate is null if property path
-        val filterOpt = (pattern.getSubject, predicateURI, pattern.getObject) match {
-          case (variable: Node_Variable,
-            QueryExpander.SUBCLASS_OF,
-            expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
-            QueryExpander.runQueryAndMakeFilter(querySubClasses, expression, prefixes, variable)
-          case (expression: Node_Literal,
-            QueryExpander.SUBCLASS_OF,
-            variable: Node_Variable) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
-            QueryExpander.runQueryAndMakeFilter(querySuperClasses, expression, prefixes, variable)
-          case (variable: Node_Variable,
-            QueryExpander.EQUIVALENT_CLASS,
-            expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
-            QueryExpander.runQueryAndMakeFilter(queryEquivalentClasses, expression, prefixes, variable)
-          case (expression: Node_Literal,
-            QueryExpander.EQUIVALENT_CLASS,
-            variable: Node_Variable) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
-            QueryExpander.runQueryAndMakeFilter(queryEquivalentClasses, expression, prefixes, variable)
-          case (variable: Node_Variable,
-            QueryExpander.TYPE,
-            expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
-            QueryExpander.runQueryAndMakeFilter(queryIndividuals, expression, prefixes, variable)
-          case _ => None
-        }
-        for (filter <- filterOpt) {
-          patterns.remove()
-          group.addElement(filter)
+  class SPARQLVisitor(prefixes: Map[String, String]) extends RecursiveElementVisitor(new ElementVisitorBase()) {
+
+    override def endElement(filter: ElementFilter): Unit = filter.getExpr match {
+      case existsLike: ExprFunctionOp => ElementWalker.walk(existsLike.getElement, this)
+      case _ => Unit
+    }
+
+    override def endElement(group: ElementGroup): Unit = {
+      println("group:")
+      println(group)
+      for (pathBlock <- group.getElements.collect({ case pb: ElementPathBlock => pb })) {
+        val patterns = pathBlock.getPattern.iterator
+        for (pattern <- patterns) {
+          val predicateURI = Option(pattern.getPredicate).collect({ case uri: Node_URI => uri.getURI }).getOrElse(null) //predicate is null if property path
+          val filterOpt = (pattern.getSubject, predicateURI, pattern.getObject) match {
+            case (variable: Node_Variable,
+              QueryExpander.SUBCLASS_OF,
+              expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+              QueryExpander.runQueryAndMakeFilter(querySubClasses, expression, prefixes, variable)
+            case (expression: Node_Literal,
+              QueryExpander.SUBCLASS_OF,
+              variable: Node_Variable) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+              QueryExpander.runQueryAndMakeFilter(querySuperClasses, expression, prefixes, variable)
+            case (variable: Node_Variable,
+              QueryExpander.EQUIVALENT_CLASS,
+              expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+              QueryExpander.runQueryAndMakeFilter(queryEquivalentClasses, expression, prefixes, variable)
+            case (expression: Node_Literal,
+              QueryExpander.EQUIVALENT_CLASS,
+              variable: Node_Variable) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+              QueryExpander.runQueryAndMakeFilter(queryEquivalentClasses, expression, prefixes, variable)
+            case (variable: Node_Variable,
+              QueryExpander.TYPE,
+              expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+              QueryExpander.runQueryAndMakeFilter(queryIndividuals, expression, prefixes, variable)
+            case _ => None
+          }
+          for (filter <- filterOpt) {
+            patterns.remove()
+            group.addElement(filter)
+          }
         }
       }
     }
+
   }
 
   private def querySubClasses(expression: OWLClassExpression): Set[OWLClass] = {
