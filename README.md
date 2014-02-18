@@ -63,7 +63,6 @@ import org.phenoscape.owlet.QueryExpander;
 
 public class SPARQLQueryRunner {
 
-	@Test
 	public void runSPARQLQuery() throws OWLOntologyCreationException, IOException {
 		final OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 		final OWLOntology ontology = manager.loadOntologyFromOntologyDocument(new File("my_ontology.owl"));
