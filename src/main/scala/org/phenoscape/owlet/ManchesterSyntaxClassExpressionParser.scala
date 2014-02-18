@@ -1,6 +1,6 @@
 package org.phenoscape.owlet
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.Map
 import scala.util.parsing.combinator.RegexParsers
 
@@ -28,12 +28,15 @@ import org.semanticweb.owlapi.vocab.XSDVocabulary
 
 object ManchesterSyntaxClassExpressionParser {
 
-  def parse(expression: String): Option[OWLClassExpression] = {
-    parse(expression, Map())
-  }
+  def parse(expression: String): Option[OWLClassExpression] = parse(expression, Map[String, String]())
 
   def parse(expression: String, prefixes: Map[String, String]): Option[OWLClassExpression] = {
     val parser = new ManchesterParser(prefixes)
+    parser.parseExpression(expression)
+  }
+  
+  def parse(expression: String, prefixes: java.util.Map[String, String]): Option[OWLClassExpression] = {
+    val parser = new ManchesterParser(prefixes.asScala)
     parser.parseExpression(expression)
   }
 
@@ -80,7 +83,7 @@ object ManchesterSyntaxClassExpressionParser {
 
     def individualIRI: Parser[OWLNamedIndividual] = iri ^^ factory.getOWLNamedIndividual
 
-    def individualList: Parser[OWLObjectOneOf] = "{" ~> repsep(individualIRI, ",") <~ "}" ^^ (in => factory.getOWLObjectOneOf(in.toSet))
+    def individualList: Parser[OWLObjectOneOf] = "{" ~> repsep(individualIRI, ",") <~ "}" ^^ (in => factory.getOWLObjectOneOf(in.toSet.asJava))
 
     def integerDatatype: Parser[OWLDatatype] = "integer" ^^ (in => factory.getIntegerOWLDatatype)
 
@@ -100,13 +103,13 @@ object ManchesterSyntaxClassExpressionParser {
 
     def description: Parser[OWLClassExpression] = repsep(conjunction, "or") ^^ (in => in.size match {
       case 1 => in.head
-      case _ => factory.getOWLObjectUnionOf(in.toSet)
+      case _ => factory.getOWLObjectUnionOf(in.toSet.asJava)
     })
 
     def conjunction: Parser[OWLClassExpression] = //classIRI ~ "that" ~ opt("not") ~ restriction ~ rep("and" ~ opt("not") ~ restriction) |
       repsep(primary, "and") ^^ (in => in.size match {
         case 1 => in.head
-        case _ => factory.getOWLObjectIntersectionOf(in.toSet)
+        case _ => factory.getOWLObjectIntersectionOf(in.toSet.asJava)
       })
 
     def negation: Parser[OWLObjectComplementOf] = "not" ~> (restriction | atomic) ^^ factory.getOWLObjectComplementOf
