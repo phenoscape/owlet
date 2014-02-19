@@ -22,7 +22,6 @@ import com.hp.hpl.jena.sparql.syntax.ElementFilter
 import com.hp.hpl.jena.sparql.syntax.ElementGroup
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock
 import com.hp.hpl.jena.sparql.path.P_ZeroOrMore1
-import com.hp.hpl.jena.sparql.path.P_ZeroOrMoreN
 
 object SPARQLComposer {
 
@@ -90,8 +89,8 @@ object SPARQLComposer {
       new P_Seq(new P_Link(owlEntityToNode(self)), rightSide)
     }
 
-    def * : P_ZeroOrMoreN = {
-      new P_ZeroOrMoreN(self)
+    def * : P_ZeroOrMore1 = {
+      new P_ZeroOrMore1(self)
     }
 
   }
