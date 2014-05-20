@@ -10,16 +10,6 @@
 	</properties>
 	<version>1.0-SNAPSHOT</version>
 	<name>owlet</name>
-	<repositories>
-		<repository>
-			<id>BerkeleyBOP</id>
-			<name>Berkeley BOP maven repository</name>
-			<url>http://code.berkeleybop.org/maven/repository/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
@@ -35,8 +25,22 @@
 		<dependency>
 			<groupId>org.semanticweb.elk</groupId>
 			<artifactId>elk-owlapi</artifactId>
-			<version>0.4.0</version>
+			<version>0.4.1</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>owlapi-apibinding</artifactId>
+					<groupId>net.sourceforge.owlapi</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>owlapi-api</artifactId>
+					<groupId>net.sourceforge.owlapi</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>owlapi-impl</artifactId>
+					<groupId>net.sourceforge.owlapi</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -46,7 +50,7 @@
 		<dependency>
 			<groupId>net.sourceforge.owlapi</groupId>
 			<artifactId>owlapi-distribution</artifactId>
-			<version>3.4.4</version>
+			<version>3.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
