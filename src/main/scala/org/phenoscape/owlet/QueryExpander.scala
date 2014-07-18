@@ -36,6 +36,10 @@ import com.hp.hpl.jena.vocabulary.RDFS
 import com.hp.hpl.jena.vocabulary.OWL2
 import com.hp.hpl.jena.vocabulary.RDF
 import com.hp.hpl.jena.graph.Triple
+import com.hp.hpl.jena.graph.impl.GraphBase
+import com.hp.hpl.jena.graph.TripleMatch
+import com.hp.hpl.jena.util.iterator.ExtendedIterator
+import com.hp.hpl.jena.util.iterator.WrappedIterator
 
 /**
  * Processes SPARQL queries containing triple patterns with embedded OWL class expressions.
@@ -122,12 +126,21 @@ class QueryExpander(reasoner: OWLReasoner) {
 
   def performSPARQLQuery(query: Query): String = {
     val prefixMap = query.getPrefixMapping.getNsPrefixMap.toMap
-    val model = ModelFactory.createModelForGraph(new OwletGraph(this.reasoner, prefixMap))
+    val model = ModelFactory.createModelForGraph(new OwletGraph(prefixMap))
     println("Model: " + model)
     val queryExecution = QueryExecutionFactory.create(query, model)
     val result = queryExecution.execSelect
     println(result.hasNext)
     result.toString
+  }
+
+  class OwletGraph(prefixes: Map[String, String]) extends GraphBase {
+
+    override def graphBaseFind(pattern: TripleMatch): ExtendedIterator[Triple] = {
+      val results = matchTriple(new TriplePath(pattern.asTriple), prefixes).map(_.toTriples).getOrElse(Set())
+      WrappedIterator.create(results.iterator)
+    }
+
   }
 
 }
