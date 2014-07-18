@@ -72,9 +72,10 @@ class QueryExpander(reasoner: OWLReasoner) {
         for {
           pattern <- patterns
           result <- matchTriple(pattern, prefixes)
+          filter <- result.toFilter
         } {
           patterns.remove()
-          group.addElement(result.toFilter)
+          group.addElement(filter)
         }
       }
     }

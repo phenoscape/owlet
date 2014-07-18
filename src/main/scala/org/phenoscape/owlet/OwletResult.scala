@@ -11,15 +11,21 @@ import com.hp.hpl.jena.sparql.expr.ExprVar
 import com.hp.hpl.jena.graph.NodeFactory
 import scala.collection.JavaConversions._
 import com.hp.hpl.jena.graph.Node
+import org.apache.log4j.Logger
 
 case class OwletResult(triple: Triple, terms: Set[_ <: OWLEntity]) {
 
-  def toFilter: ElementFilter = {
+  /**
+   * @return an optional ElementFilter: if the starting triple contained Node.ANY rather
+   * than a variable, a filter cannot be created
+   */
+  def toFilter: Option[ElementFilter] = {
     val variable = (triple.getSubject, triple.getPredicate, triple.getObject) match {
-      case (variableNode: Node_Variable, _, _) => variableNode
-      case (_, _, variableNode: Node_Variable) => variableNode
+      case (variableNode: Node_Variable, _, _) => Option(variableNode)
+      case (_, _, variableNode: Node_Variable) => Option(variableNode)
+      case _ => None
     }
-    QueryExpander.makeFilter(variable, terms)
+    variable.map(QueryExpander.makeFilter(_, terms))
   }
 
   def toTriples: Set[Triple] = {
