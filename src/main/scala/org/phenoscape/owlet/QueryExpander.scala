@@ -127,10 +127,8 @@ class QueryExpander(reasoner: OWLReasoner) {
   def performSPARQLQuery(query: Query): String = {
     val prefixMap = query.getPrefixMapping.getNsPrefixMap.toMap
     val model = ModelFactory.createModelForGraph(new OwletGraph(prefixMap))
-    println("Model: " + model)
     val queryExecution = QueryExecutionFactory.create(query, model)
     val result = queryExecution.execSelect
-    println(result.hasNext)
     result.toString
   }
 

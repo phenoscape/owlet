@@ -14,8 +14,6 @@ import com.hp.hpl.jena.graph.Node
 
 case class OwletResult(triple: Triple, terms: Set[_ <: OWLEntity]) {
 
-  println("Created result with: " + terms)
-
   def toFilter: ElementFilter = {
     val variable = (triple.getSubject, triple.getPredicate, triple.getObject) match {
       case (variableNode: Node_Variable, _, _) => variableNode
