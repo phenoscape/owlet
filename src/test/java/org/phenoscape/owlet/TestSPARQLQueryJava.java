@@ -46,9 +46,9 @@ public class TestSPARQLQueryJava {
 				+ "?structure rdfs:subClassOf \"part_of: some axial_skeleton:\"^^ow:omn .\n"
 				+ "}";
 
-		final QueryExpander expander = new QueryExpander(reasoner);
+		final Owlet owlet = new Owlet(reasoner);
 		final Query query = QueryFactory.create(queryText);
-		final Query expandedQuery = expander.expandQuery(query);
+		final Query expandedQuery = owlet.expandQuery(query);
 		@SuppressWarnings("unused")
 		final ResultSet results = QueryExecutionFactory.create(expandedQuery, rdfModel).execSelect();
 	}
