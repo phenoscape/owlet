@@ -46,7 +46,7 @@ import com.hp.hpl.jena.util.iterator.WrappedIterator
  * Class expressions are evaluated and queried against an OWL reasoner, and the triple
  * pattern is replaced with a FILTER(?x IN (...)).
  */
-class QueryExpander(reasoner: OWLReasoner) {
+class Owlet(reasoner: OWLReasoner) {
 
   def expandQueryString(query: String): String = {
     val parsedQuery = QueryFactory.create(query)
@@ -110,19 +110,19 @@ class QueryExpander(reasoner: OWLReasoner) {
 
   def matchTriple(triple: TriplePath, prefixes: Map[String, String]): Option[OwletResult] = for {
     (expression, queryFunction) <- (triple.getSubject, triple.getPredicate, triple.getObject) match {
-      case (_: Node_Variable | Node.ANY, QueryExpander.SubClassOf, expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+      case (_: Node_Variable | Node.ANY, Owlet.SubClassOf, expression: Node_Literal) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
         Option(expression, querySubClasses _)
-      case (expression: Node_Literal, QueryExpander.SubClassOf, _: Node_Variable | Node.ANY) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+      case (expression: Node_Literal, Owlet.SubClassOf, _: Node_Variable | Node.ANY) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
         Option(expression, querySuperClasses _)
-      case (_: Node_Variable | Node.ANY, QueryExpander.EquivalentClass, expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+      case (_: Node_Variable | Node.ANY, Owlet.EquivalentClass, expression: Node_Literal) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
         Option(expression, queryEquivalentClasses _)
-      case (expression: Node_Literal, QueryExpander.EquivalentClass, _: Node_Variable | Node.ANY) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+      case (expression: Node_Literal, Owlet.EquivalentClass, _: Node_Variable | Node.ANY) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
         Option(expression, queryEquivalentClasses _)
-      case (_: Node_Variable | Node.ANY, QueryExpander.Type, expression: Node_Literal) if QueryExpander.SYNTAXES(expression.getLiteralDatatypeURI) =>
+      case (_: Node_Variable | Node.ANY, Owlet.Type, expression: Node_Literal) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
         Option(expression, queryIndividuals _)
       case _ => None
     }
-    classExpression <- QueryExpander.parseExpression(expression, prefixes)
+    classExpression <- Owlet.parseExpression(expression, prefixes)
   } yield OwletResult(triple.asTriple, queryFunction(classExpression))
 
   def performSPARQLQuery(query: Query): String = {
@@ -144,7 +144,7 @@ class QueryExpander(reasoner: OWLReasoner) {
 
 }
 
-object QueryExpander {
+object Owlet {
 
   val SubClassOf = RDFS.Nodes.subClassOf
   val EquivalentClass = OWL2.equivalentClass.asNode

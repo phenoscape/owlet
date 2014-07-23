@@ -34,7 +34,7 @@ class TestQueryExpander {
 
   @Test
   def testQueryExpander(): Unit = {
-    val expander = new QueryExpander(TestQueryExpander.reasoner)
+    val expander = new Owlet(TestQueryExpander.reasoner)
 
     val xmlExpression = <ObjectSomeValuesFrom><ObjectProperty abbreviatedIRI="part_of:"/><Class abbreviatedIRI="axial_skeleton:"/></ObjectSomeValuesFrom>
     val xmlExpressionText = EscapeStr.stringEsc(xmlExpression.toString())
@@ -132,7 +132,7 @@ class TestQueryExpander {
 					?taxon rdfs:label ?taxon_label .
 					?taxon rdfs:subClassOf* Sarcopterygii: .
 					}"""
-    val expander = new QueryExpander(TestQueryExpander.reasoner)
+    val expander = new Owlet(TestQueryExpander.reasoner)
     val expandedQuery = expander.expandQueryString(query)
     println(expandedQuery)
   }
@@ -153,7 +153,7 @@ class TestQueryExpander {
     			}
     			LIMIT 10
     			"""
-    val expander = new QueryExpander(TestQueryExpander.reasoner)
+    val expander = new Owlet(TestQueryExpander.reasoner)
     val expandedQuery = expander.expandQueryString(query)
     println(expandedQuery)
   }
@@ -180,7 +180,7 @@ class TestQueryExpander {
     				}
 					}
 					"""
-    val expander = new QueryExpander(TestQueryExpander.reasoner)
+    val expander = new Owlet(TestQueryExpander.reasoner)
     val expandedQuery = expander.expandQueryString(manchesterQuery)
     println(expandedQuery)
     Assert.assertTrue(expandedQuery.contains("FILTER ( ?structure IN"))

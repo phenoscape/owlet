@@ -38,7 +38,7 @@ class TestSPARQLQuery {
 					?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^ow:omn .
 					}
 					"""
-    val expander = new QueryExpander(reasoner)
+    val expander = new Owlet(reasoner)
     val query = QueryFactory.create(queryText)
     val unexpandedResults = QueryExecutionFactory.create(query, vsaoRDF).execSelect()
     Assert.assertFalse("Shouldn't get any results before expansion", unexpandedResults.hasNext)
@@ -74,7 +74,7 @@ class TestSPARQLQuery {
 					?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^ow:omn .
 					}
 					"""
-    val expander = new QueryExpander(reasoner)
+    val expander = new Owlet(reasoner)
     val query = QueryFactory.create(queryText)
     expander.performSPARQLQuery(query)
   }

@@ -25,7 +25,7 @@ case class OwletResult(triple: Triple, terms: Set[_ <: OWLEntity]) {
       case (_, _, variableNode: Node_Variable) => Option(variableNode)
       case _ => None
     }
-    variable.map(QueryExpander.makeFilter(_, terms))
+    variable.map(Owlet.makeFilter(_, terms))
   }
 
   def toTriples: Set[Triple] = {

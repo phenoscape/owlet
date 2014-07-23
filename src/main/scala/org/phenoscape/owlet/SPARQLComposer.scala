@@ -50,7 +50,7 @@ object SPARQLComposer {
       subclasses + expression.asOWLClass
     else
       subclasses
-    QueryExpander.makeFilter(variable, filterClasses)
+    Owlet.makeFilter(variable, filterClasses)
   }
 
   def str(variable: Var): E_Str = new E_Str(new ExprVar(variable))
