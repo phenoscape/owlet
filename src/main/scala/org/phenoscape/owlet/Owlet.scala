@@ -50,11 +50,6 @@ import com.hp.hpl.jena.sparql.mgt.Explain
  */
 class Owlet(reasoner: OWLReasoner) {
 
-  // The query optimizer must be turned off so that the OWL reasoner 
-  // can be queried once rather than for every VALUES binding.
-  // This also makes property paths work correctly with our fake RDF graph.
-  ARQ.enableOptimizer(false)
-
   def expandQueryString(query: String): String = {
     val parsedQuery = QueryFactory.create(query)
     expandQuery(parsedQuery).toString
@@ -136,16 +131,17 @@ class Owlet(reasoner: OWLReasoner) {
     val prefixMap = query.getPrefixMapping.getNsPrefixMap.toMap
     val model = ModelFactory.createModelForGraph(new OwletGraph(prefixMap))
     val queryExecution = QueryExecutionFactory.create(query, model)
+    // The query optimizer must be turned off so that the OWL reasoner 
+    // can be queried once rather than for every VALUES binding.
+    // This also makes property paths work correctly with our fake RDF graph.
+    ARQ.enableOptimizer(queryExecution.getContext, false)
     queryExecution.execSelect
   }
 
   private class OwletGraph(prefixes: Map[String, String]) extends GraphBase {
 
     override def graphBaseFind(pattern: TripleMatch): ExtendedIterator[Triple] = {
-      println("The triple is: " + pattern)
       val results = matchTriple(new TriplePath(pattern.asTriple), prefixes).map(_.toTriples).getOrElse(Set())
-      println("Returning matched triples:")
-      println(results)
       WrappedIterator.create(results.iterator)
     }
 
