@@ -25,7 +25,7 @@ object TestQueryExpander {
 
   @AfterClass
   def disposeReasoner(): Unit = {
-    //reasoner.dispose()
+    reasoner.dispose()
   }
 
 }

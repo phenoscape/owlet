@@ -40,6 +40,8 @@ import com.hp.hpl.jena.graph.impl.GraphBase
 import com.hp.hpl.jena.graph.TripleMatch
 import com.hp.hpl.jena.util.iterator.ExtendedIterator
 import com.hp.hpl.jena.util.iterator.WrappedIterator
+import com.hp.hpl.jena.query.ResultSet
+import com.hp.hpl.jena.sparql.mgt.Explain
 
 /**
  * Processes SPARQL queries containing triple patterns with embedded OWL class expressions.
@@ -47,6 +49,11 @@ import com.hp.hpl.jena.util.iterator.WrappedIterator
  * pattern is replaced with a FILTER(?x IN (...)).
  */
 class Owlet(reasoner: OWLReasoner) {
+
+  // The query optimizer must be turned off so that the OWL reasoner 
+  // can be queried once rather than for every VALUES binding.
+  // This also makes property paths work correctly with our fake RDF graph.
+  ARQ.enableOptimizer(false)
 
   def expandQueryString(query: String): String = {
     val parsedQuery = QueryFactory.create(query)
@@ -59,7 +66,7 @@ class Owlet(reasoner: OWLReasoner) {
     query
   }
 
-  class SPARQLVisitor(prefixes: Map[String, String]) extends RecursiveElementVisitor(new ElementVisitorBase()) {
+  private class SPARQLVisitor(prefixes: Map[String, String]) extends RecursiveElementVisitor(new ElementVisitorBase()) {
 
     override def endElement(filter: ElementFilter): Unit = filter.getExpr match {
       case existsLike: ExprFunctionOp => ElementWalker.walk(existsLike.getElement, this)
@@ -108,7 +115,7 @@ class Owlet(reasoner: OWLReasoner) {
 
   private def queryIndividuals(expression: OWLClassExpression): Set[OWLNamedIndividual] = reasoner.getInstances(expression, false).getFlattened.toSet
 
-  def matchTriple(triple: TriplePath, prefixes: Map[String, String]): Option[OwletResult] = for {
+  private def matchTriple(triple: TriplePath, prefixes: Map[String, String]): Option[OwletResult] = for {
     (expression, queryFunction) <- (triple.getSubject, triple.getPredicate, triple.getObject) match {
       case (_: Node_Variable | Node.ANY, Owlet.SubClassOf, expression: Node_Literal) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
         Option(expression, querySubClasses _)
@@ -125,18 +132,20 @@ class Owlet(reasoner: OWLReasoner) {
     classExpression <- Owlet.parseExpression(expression, prefixes)
   } yield OwletResult(triple.asTriple, queryFunction(classExpression))
 
-  def performSPARQLQuery(query: Query): String = {
+  def performSPARQLQuery(query: Query): ResultSet = {
     val prefixMap = query.getPrefixMapping.getNsPrefixMap.toMap
     val model = ModelFactory.createModelForGraph(new OwletGraph(prefixMap))
     val queryExecution = QueryExecutionFactory.create(query, model)
-    val result = queryExecution.execSelect
-    result.toString
+    queryExecution.execSelect
   }
 
-  class OwletGraph(prefixes: Map[String, String]) extends GraphBase {
+  private class OwletGraph(prefixes: Map[String, String]) extends GraphBase {
 
     override def graphBaseFind(pattern: TripleMatch): ExtendedIterator[Triple] = {
+      println("The triple is: " + pattern)
       val results = matchTriple(new TriplePath(pattern.asTriple), prefixes).map(_.toTriples).getOrElse(Set())
+      println("Returning matched triples:")
+      println(results)
       WrappedIterator.create(results.iterator)
     }
 
@@ -163,7 +172,7 @@ object Owlet {
     }
   }
 
-  def parseExpression(literal: Node_Literal, prefixes: Map[String, String]): Option[OWLClassExpression] = {
+  private def parseExpression(literal: Node_Literal, prefixes: Map[String, String]): Option[OWLClassExpression] = {
     val expression = literal.getLiteralLexicalForm
     literal.getLiteralDatatypeURI match {
       case MANCHESTER => ManchesterSyntaxClassExpressionParser.parse(expression, prefixes)
