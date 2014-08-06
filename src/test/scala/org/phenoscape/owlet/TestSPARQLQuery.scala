@@ -153,7 +153,6 @@ class TestSPARQLQuery {
 					}
 					"""
     Assert.assertEquals("Should get nineteen results", 19, owlet.performSPARQLQuery(QueryFactory.create(queryWithAlternative)).length)
-
   }
 
 }

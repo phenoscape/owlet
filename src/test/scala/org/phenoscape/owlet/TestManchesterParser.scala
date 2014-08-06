@@ -79,4 +79,13 @@ class TestManchesterParser {
     Assert.assertTrue(parsed.get.isInstanceOf[OWLClassExpression])
   }
 
+  @Test
+  def testFailOnMissingPrefix(): Unit = {
+    val expression = "ex:head and not (ex:part_of some ex:eye)"
+    val parsed = ManchesterSyntaxClassExpressionParser.parse(expression)
+    Assert.assertEquals(None, parsed)
+    val parsedWithPrefixes = ManchesterSyntaxClassExpressionParser.parse(expression, Map("ex" -> "http://example.org/"))
+    Assert.assertTrue(parsedWithPrefixes.get.isInstanceOf[OWLClassExpression])
+  }
+
 }
