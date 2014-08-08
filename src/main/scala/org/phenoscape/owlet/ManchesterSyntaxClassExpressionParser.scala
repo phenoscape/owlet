@@ -3,7 +3,6 @@ package org.phenoscape.owlet
 import scala.collection.JavaConverters._
 import scala.collection.Map
 import scala.util.parsing.combinator.RegexParsers
-
 import org.apache.log4j.Logger
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.IRI
@@ -25,19 +24,30 @@ import org.semanticweb.owlapi.model.OWLObjectProperty
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom
 import org.semanticweb.owlapi.vocab.XSDVocabulary
+import scalaz.Validation
 
 object ManchesterSyntaxClassExpressionParser {
 
-  def parse(expression: String): Option[OWLClassExpression] = parse(expression, Map[String, String]())
+  def parse(expression: String): Validation[String, OWLClassExpression] = parse(expression, Map[String, String]())
 
-  def parse(expression: String, prefixes: Map[String, String]): Option[OWLClassExpression] = {
+  def parse(expression: String, prefixes: Map[String, String]): Validation[String, OWLClassExpression] = {
     val parser = new ManchesterParser(prefixes)
     parser.parseExpression(expression)
   }
 
-  def parse(expression: String, prefixes: java.util.Map[String, String]): Option[OWLClassExpression] = {
+  def parse(expression: String, prefixes: java.util.Map[String, String]): Validation[String, OWLClassExpression] = {
     val parser = new ManchesterParser(prefixes.asScala)
     parser.parseExpression(expression)
+  }
+
+  def parseIRI(input: String, prefixes: Map[String, String] = Map[String, String]()): Validation[String, IRI] = {
+    val parser = new ManchesterParser(prefixes)
+    parser.parseIRI(input)
+  }
+
+  def parseIRI(input: String, prefixes: java.util.Map[String, String]): Validation[String, IRI] = {
+    val parser = new ManchesterParser(prefixes.asScala)
+    parser.parseIRI(input)
   }
 
   private class ManchesterParser(prefixes: Map[String, String]) extends RegexParsers {
@@ -161,13 +171,17 @@ object ManchesterSyntaxClassExpressionParser {
 
     def atomic: Parser[OWLClassExpression] = classIRI | individualList | "(" ~> description <~ ")"
 
-    def parseExpression(expression: String): Option[OWLClassExpression] = {
+    def parseExpression(expression: String): Validation[String, OWLClassExpression] = {
       parseAll(description, expression) match {
-        case Success(result, remainder) => Option(result)
-        case NoSuccess(message, remainder) => {
-          logger.error("Failed to parse class expression: " + message)
-          None
-        }
+        case Success(result, remainder) => Validation.success(result)
+        case NoSuccess(message, remainder) => Validation.failure(message)
+      }
+    }
+
+    def parseIRI(input: String): Validation[String, IRI] = {
+      parseAll(iri, input) match {
+        case Success(result, remainder) => Validation.success(result)
+        case NoSuccess(message, remainder) => Validation.failure(message)
       }
     }
 

@@ -42,6 +42,7 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator
 import com.hp.hpl.jena.util.iterator.WrappedIterator
 import com.hp.hpl.jena.query.ResultSet
 import com.hp.hpl.jena.sparql.mgt.Explain
+import scalaz.Validation
 
 /**
  * Processes SPARQL queries containing triple patterns with embedded OWL class expressions.
@@ -171,7 +172,7 @@ object Owlet {
   private def parseExpression(literal: Node_Literal, prefixes: Map[String, String]): Option[OWLClassExpression] = {
     val expression = literal.getLiteralLexicalForm
     literal.getLiteralDatatypeURI match {
-      case MANCHESTER => ManchesterSyntaxClassExpressionParser.parse(expression, prefixes)
+      case MANCHESTER => ManchesterSyntaxClassExpressionParser.parse(expression, prefixes).toOption
       case OWLXML => OWLXMLClassExpressionParser.parse(expression, prefixes)
       case FUNCTIONAL => parseFunctional(expression, prefixes)
     }

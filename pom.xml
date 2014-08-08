@@ -17,6 +17,11 @@
 			<version>2.10.3</version>
 		</dependency>
 		<dependency>
+			<groupId>org.scalaz</groupId>
+			<artifactId>scalaz-core_2.10</artifactId>
+			<version>7.1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
