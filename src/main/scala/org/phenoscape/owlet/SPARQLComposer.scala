@@ -22,6 +22,7 @@ import com.hp.hpl.jena.sparql.syntax.ElementFilter
 import com.hp.hpl.jena.sparql.syntax.ElementGroup
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock
 import com.hp.hpl.jena.sparql.path.P_ZeroOrMore1
+import com.hp.hpl.jena.sparql.syntax.ElementService
 
 object SPARQLComposer {
 
@@ -40,8 +41,14 @@ object SPARQLComposer {
 
   def bgp(triples: TriplePath*): ElementPathBlock = {
     val block = new ElementPathBlock()
-    triples foreach { block.addTriplePath(_) }
+    triples.foreach(block.addTriplePath)
     block
+  }
+
+  def service(uri: String, elements: Element*): ElementService = {
+    val body = new ElementGroup()
+    elements.foreach(body.addElement)
+    new ElementService(uri, body)
   }
 
   def subClassOf(variable: Symbol, expression: OWLClassExpression)(implicit reasoner: OWLReasoner): ElementFilter = {

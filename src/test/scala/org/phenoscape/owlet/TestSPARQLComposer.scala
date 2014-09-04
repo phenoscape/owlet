@@ -15,7 +15,10 @@ class TestSPARQLComposer {
     val query = select_distinct('phenotype) from "http://kb.phenoscape.org/" where (
       bgp(
         t('eq, rdfsSubClassOf*, 'absence),
-        t('phenotype, rdfType, 'eq)))
+        t('phenotype, rdfType, 'eq)),
+        service("http://owlery.phenoscape.org/sparql",
+          bgp(
+            t('eq, rdfsSubClassOf, 'something))))
     println(query)
   }
 
