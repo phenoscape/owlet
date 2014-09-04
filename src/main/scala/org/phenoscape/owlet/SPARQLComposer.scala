@@ -23,6 +23,8 @@ import com.hp.hpl.jena.sparql.syntax.ElementGroup
 import com.hp.hpl.jena.sparql.syntax.ElementPathBlock
 import com.hp.hpl.jena.sparql.path.P_ZeroOrMore1
 import com.hp.hpl.jena.sparql.syntax.ElementService
+import com.hp.hpl.jena.datatypes.TypeMapper
+import com.hp.hpl.jena.datatypes.RDFDatatype
 
 object SPARQLComposer {
 
@@ -73,6 +75,18 @@ object SPARQLComposer {
   implicit def owlEntityToPath(entity: OWLEntity): P_Link = new P_Link(owlEntityToNode(entity))
 
   def t(s: Node, p: Path, o: Node): TriplePath = new TriplePath(s, p, o)
+
+  implicit class StringToLiteral(val self: String) extends AnyVal {
+
+    def ^^(datatypeURI: String): Node = {
+      ^^(TypeMapper.getInstance.getSafeTypeByName(datatypeURI))
+    }
+
+    def ^^(datatype: RDFDatatype): Node = {
+      NodeFactory.createLiteral(self, datatype)
+    }
+
+  }
 
   implicit class ComposerQuery(val self: Query) extends AnyVal {
 
