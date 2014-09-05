@@ -25,6 +25,7 @@ import com.hp.hpl.jena.sparql.path.P_ZeroOrMore1
 import com.hp.hpl.jena.sparql.syntax.ElementService
 import com.hp.hpl.jena.datatypes.TypeMapper
 import com.hp.hpl.jena.datatypes.RDFDatatype
+import com.hp.hpl.jena.sparql.syntax.ElementOptional
 
 object SPARQLComposer {
 
@@ -45,6 +46,12 @@ object SPARQLComposer {
     val block = new ElementPathBlock()
     triples.foreach(block.addTriplePath)
     block
+  }
+
+  def optional(elements: Element*): ElementOptional = {
+    val body = new ElementGroup()
+    elements.foreach(body.addElement)
+    new ElementOptional(body)
   }
 
   def service(uri: String, elements: Element*): ElementService = {
