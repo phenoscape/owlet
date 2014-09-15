@@ -13,9 +13,7 @@ import org.semanticweb.owlapi.model.OWLClassExpressionVisitor
 import org.semanticweb.owlapi.util.ShortFormProvider
 import org.semanticweb.owlapi.model.OWLEntity
 
-object OwletManchesterSyntaxDataType extends BaseDatatype(Owlet.MANCHESTER) {
-
-  TypeMapper.getInstance.registerDatatype(this);
+object OwletManchesterSyntaxDataType {
 
   object FullIRIProvider extends ShortFormProvider {
 
@@ -32,7 +30,8 @@ object OwletManchesterSyntaxDataType extends BaseDatatype(Owlet.MANCHESTER) {
       val renderer = new ManchesterOWLSyntaxObjectRenderer(writer, FullIRIProvider)
       renderer.setUseWrapping(false)
       self.accept(renderer: OWLClassExpressionVisitor)
-      NodeFactory.createLiteral(writer.toString, OwletManchesterSyntaxDataType)
+      writer.close()
+      NodeFactory.createLiteral(writer.toString, TypeMapper.getInstance.getSafeTypeByName(Owlet.MANCHESTER))
     }
 
   }
