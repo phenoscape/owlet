@@ -28,7 +28,7 @@ class TestSPARQLComposer {
         service("http://owlery.phenoscape.org/sparql",
           bgp(
             t('eq, rdfsSubClassOf, "part_of some blah" ^^ omn),
-             t('eq, rdfsSubClassOf, expression.asOMN))))
+            t('eq, rdfsSubClassOf, expression.asOMN)))) order_by 'phenotype
     println(query)
   }
 

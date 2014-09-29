@@ -26,6 +26,7 @@ import com.hp.hpl.jena.sparql.syntax.ElementService
 import com.hp.hpl.jena.datatypes.TypeMapper
 import com.hp.hpl.jena.datatypes.RDFDatatype
 import com.hp.hpl.jena.sparql.syntax.ElementOptional
+import com.hp.hpl.jena.query.SortCondition
 
 object SPARQLComposer {
 
@@ -71,7 +72,13 @@ object SPARQLComposer {
 
   def str(variable: Var): E_Str = new E_Str(new ExprVar(variable))
 
+  def asc(variable: Var): SortCondition = new SortCondition(variable, Query.ORDER_ASCENDING)
+
+  def desc(variable: Var): SortCondition = new SortCondition(variable, Query.ORDER_DESCENDING)
+
   implicit def symbolToVar(value: Symbol): Var = Var.alloc(value.name)
+
+  implicit def symbolToSortCondition(value: Symbol): SortCondition = new SortCondition(symbolToVar(value), Query.ORDER_DEFAULT)
 
   implicit def iriToNode(iri: IRI): Node = NodeFactory.createURI(iri.toString)
 
@@ -106,6 +113,11 @@ object SPARQLComposer {
       val body = new ElementGroup()
       elements foreach { body.addElement(_) }
       self.setQueryPattern(body)
+      self
+    }
+
+    def order_by(sortConditions: SortCondition*): Query = {
+      sortConditions.foreach(self.addOrderBy(_))
       self
     }
 
