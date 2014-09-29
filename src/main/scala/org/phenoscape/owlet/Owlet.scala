@@ -1,5 +1,6 @@
 package org.phenoscape.owlet
 
+import java.util.UUID
 import scala.collection.JavaConversions._
 import scala.collection.Map
 import scala.collection.immutable.Set
@@ -7,8 +8,10 @@ import org.semanticweb.owlapi.model.OWLClass
 import org.semanticweb.owlapi.model.OWLClassExpression
 import org.semanticweb.owlapi.model.OWLEntity
 import org.semanticweb.owlapi.model.OWLNamedIndividual
+import org.semanticweb.owlapi.model.IRI
 import org.semanticweb.owlapi.reasoner.OWLReasoner
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary
+import org.semanticweb.owlapi.apibinding.OWLManager
 import com.hp.hpl.jena.graph.NodeFactory
 import com.hp.hpl.jena.graph.Node_Literal
 import com.hp.hpl.jena.graph.Node_URI
@@ -50,6 +53,8 @@ import scalaz.Validation
  * pattern is replaced with a FILTER(?x IN (...)).
  */
 class Owlet(reasoner: OWLReasoner) {
+
+  private lazy val factory = OWLManager.getOWLDataFactory
 
   def expandQueryString(query: String): String = {
     val parsedQuery = QueryFactory.create(query)
@@ -126,7 +131,22 @@ class Owlet(reasoner: OWLReasoner) {
       case _ => None
     }
     classExpression <- Owlet.parseExpression(expression, prefixes)
-  } yield OwletResult(triple.asTriple, queryFunction(classExpression))
+  } yield {
+    val namedQuery = addQueryAsClass(classExpression)
+    OwletResult(triple.asTriple, queryFunction(namedQuery))
+  }
+
+  def addQueryAsClass(expression: OWLClassExpression): OWLClass = expression match {
+    case named: OWLClass => named
+    case anonymous => {
+      val ontology = reasoner.getRootOntology
+      val manager = ontology.getOWLOntologyManager
+      val namedQuery = factory.getOWLClass(IRI.create(s"http://example.org/${UUID.randomUUID.toString}"))
+      manager.addAxiom(ontology, factory.getOWLEquivalentClassesAxiom(namedQuery, expression))
+      reasoner.flush()
+      namedQuery
+    }
+  }
 
   def performSPARQLQuery(query: Query): ResultSet = {
     val prefixMap = query.getPrefixMapping.getNsPrefixMap.toMap
