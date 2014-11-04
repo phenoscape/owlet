@@ -8,13 +8,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
-	<version>1.1.6</version>
+	<version>1.1.7</version>
 	<name>owlet</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
-			<version>2.10.3</version>
+			<version>2.10.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scalaz</groupId>
