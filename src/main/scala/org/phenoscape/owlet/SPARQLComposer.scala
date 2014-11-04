@@ -27,6 +27,7 @@ import com.hp.hpl.jena.datatypes.TypeMapper
 import com.hp.hpl.jena.datatypes.RDFDatatype
 import com.hp.hpl.jena.sparql.syntax.ElementOptional
 import com.hp.hpl.jena.query.SortCondition
+import com.hp.hpl.jena.sparql.path.P_Alt
 
 object SPARQLComposer {
 
@@ -125,13 +126,11 @@ object SPARQLComposer {
 
   implicit class ComposerProperty(val self: OWLProperty[_, _]) extends AnyVal {
 
-    def /(rightSide: Path): P_Seq = {
-      new P_Seq(new P_Link(owlEntityToNode(self)), rightSide)
-    }
+    def /(rightSide: Path): P_Seq = new P_Seq(new P_Link(owlEntityToNode(self)), rightSide)
 
-    def * : P_ZeroOrMore1 = {
-      new P_ZeroOrMore1(self)
-    }
+    def |(rightSide: Path): P_Alt = new P_Alt(self, rightSide)
+
+    def * : P_ZeroOrMore1 = new P_ZeroOrMore1(self)
 
   }
 
