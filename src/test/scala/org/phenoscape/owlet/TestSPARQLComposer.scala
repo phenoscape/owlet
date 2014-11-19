@@ -33,6 +33,25 @@ class TestSPARQLComposer {
   }
 
   @Test
+  def constructQuery(): Unit = {
+    val head = factory.getOWLClass(IRI.create("http://example.org/head"))
+    val muscle = factory.getOWLClass(IRI.create("http://example.org/muscle"))
+    val part_of = factory.getOWLObjectProperty(IRI.create("http://example.org/part_of"))
+    val expression = factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectSomeValuesFrom(part_of, head))
+    val rdfsSubClassOf = factory.getOWLObjectProperty(OWLRDFVocabulary.RDFS_SUBCLASS_OF.getIRI)
+    val rdfType = factory.getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE.getIRI)
+    val query = construct(t('phenotype, rdfType, 'eq)) from "http://kb.phenoscape.org/" where (
+      bgp(
+        t('eq, rdfsSubClassOf*, 'absence),
+        t('phenotype, rdfType, 'eq)),
+        service("http://owlery.phenoscape.org/sparql",
+          bgp(
+            t('eq, rdfsSubClassOf, "part_of some blah" ^^ omn),
+            t('eq, rdfsSubClassOf, expression.asOMN)))) order_by 'phenotype
+    println(query)
+  }
+
+  @Test
   def testManchesterSyntaxRenderer(): Unit = {
 
     val head = factory.getOWLClass(IRI.create("http://example.org/head"))

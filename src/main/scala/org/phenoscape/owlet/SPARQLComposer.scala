@@ -28,21 +28,48 @@ import com.hp.hpl.jena.datatypes.RDFDatatype
 import com.hp.hpl.jena.sparql.syntax.ElementOptional
 import com.hp.hpl.jena.query.SortCondition
 import com.hp.hpl.jena.sparql.path.P_Alt
+import com.hp.hpl.jena.query.QuerySolution
+import com.hp.hpl.jena.sparql.core.BasicPattern
+import scala.collection.JavaConverters._
+import com.hp.hpl.jena.graph.Triple
+import com.hp.hpl.jena.sparql.syntax.Template
+import com.hp.hpl.jena.sparql.modify.request.UpdateWithUsing
+import com.hp.hpl.jena.sparql.modify.request.UpdateDeleteInsert
 
 object SPARQLComposer {
 
-  def select(resultVars: Var*) = {
+  def construct(triples: Triple*): Query = {
+    val query = QueryFactory.make()
+    query.setQueryConstructType()
+    val bgp = BasicPattern.wrap(triples.asJava)
+    query.setConstructTemplate(new Template(bgp))
+    query
+  }
+
+  def select(resultVars: Var*): Query = {
     val query = QueryFactory.make()
     query.setQuerySelectType()
     resultVars foreach { query.addResultVar(_) }
     query
   }
 
-  def select_distinct(resultVars: Var*) = {
+  def select_distinct(resultVars: Var*): Query = {
     val query = select(resultVars: _*)
     query.setDistinct(true)
     query
   }
+
+//  def WITH(uri: String): UpdateDeleteInsert = {
+//    val update = new UpdateDeleteInsert()
+//    update.setWithIRI(NodeFactory.createURI(uri))
+//    update
+//  }
+
+//  def INSERT: UpdateDeleteInsert = {
+//    val update = new UpdateDeleteInsert()
+//   update.
+//    update
+//  }
 
   def bgp(triples: TriplePath*): ElementPathBlock = {
     val block = new ElementPathBlock()
@@ -91,6 +118,8 @@ object SPARQLComposer {
 
   def t(s: Node, p: Path, o: Node): TriplePath = new TriplePath(s, p, o)
 
+  implicit def triplePathToTriple(tp: TriplePath): Triple = tp.asTriple
+
   implicit class StringToLiteral(val self: String) extends AnyVal {
 
     def ^^(datatypeURI: String): Node = {
@@ -120,6 +149,10 @@ object SPARQLComposer {
     def order_by(sortConditions: SortCondition*): Query = {
       sortConditions.foreach(self.addOrderBy(_))
       self
+    }
+
+    def into[T](func: QuerySolution => T): Query = {
+      ???
     }
 
   }
