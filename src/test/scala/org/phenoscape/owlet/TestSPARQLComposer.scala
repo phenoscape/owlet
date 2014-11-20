@@ -43,10 +43,15 @@ class TestSPARQLComposer {
     val query = construct(t('phenotype, rdfType, 'eq)) from "http://kb.phenoscape.org/" where (
       bgp(
         t('eq, rdfsSubClassOf*, 'absence),
-        t('phenotype, rdfType, 'eq)),
+        t('phenotype, rdfType, 'eq),
+        t('foo, 'pred, 'bar)),
         service("http://owlery.phenoscape.org/sparql",
           bgp(
             t('eq, rdfsSubClassOf, "part_of some blah" ^^ omn),
+            t('blah, rdfsSubClassOf / rdfType, 'blah),
+            t('blah, rdfsSubClassOf / (rdfType *), 'blah),
+            t('blah, rdfsSubClassOf | (rdfType*) / part_of, 'blah),
+            t('foo, 'pred, 'bar),
             t('eq, rdfsSubClassOf, expression.asOMN)))) order_by 'phenotype
     println(query)
   }

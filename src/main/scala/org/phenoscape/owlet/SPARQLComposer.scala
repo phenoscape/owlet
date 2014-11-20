@@ -38,10 +38,10 @@ import com.hp.hpl.jena.sparql.modify.request.UpdateDeleteInsert
 
 object SPARQLComposer {
 
-  def construct(triples: Triple*): Query = {
+  def construct(triples: BasicTriple*): Query = {
     val query = QueryFactory.make()
     query.setQueryConstructType()
-    val bgp = BasicPattern.wrap(triples.asJava)
+    val bgp = BasicPattern.wrap(triples.map(triple => new Triple(triple.s, triple.p, triple.o)).asJava)
     query.setConstructTemplate(new Template(bgp))
     query
   }
@@ -59,21 +59,24 @@ object SPARQLComposer {
     query
   }
 
-//  def WITH(uri: String): UpdateDeleteInsert = {
-//    val update = new UpdateDeleteInsert()
-//    update.setWithIRI(NodeFactory.createURI(uri))
-//    update
-//  }
+  //  def WITH(uri: String): UpdateDeleteInsert = {
+  //    val update = new UpdateDeleteInsert()
+  //    update.setWithIRI(NodeFactory.createURI(uri))
+  //    update
+  //  }
 
-//  def INSERT: UpdateDeleteInsert = {
-//    val update = new UpdateDeleteInsert()
-//   update.
-//    update
-//  }
+  //  def INSERT: UpdateDeleteInsert = {
+  //    val update = new UpdateDeleteInsert()
+  //   update.
+  //    update
+  //  }
 
-  def bgp(triples: TriplePath*): ElementPathBlock = {
+  def bgp(triples: TripleOrPath*): ElementPathBlock = {
     val block = new ElementPathBlock()
-    triples.foreach(block.addTriplePath)
+    triples.foreach {
+      case triple: BasicTriple => block.addTriple(new Triple(triple.s, triple.p, triple.o))
+      case path: PathTriple => block.addTriplePath(new TriplePath(path.s, path.p, path.o))
+    }
     block
   }
 
@@ -110,13 +113,21 @@ object SPARQLComposer {
 
   implicit def iriToNode(iri: IRI): Node = NodeFactory.createURI(iri.toString)
 
-  implicit def iriToPath(iri: IRI): P_Link = new P_Link(iriToNode(iri))
+  //implicit def iriToPath(iri: IRI): P_Link = new P_Link(iriToNode(iri))
 
   implicit def owlEntityToNode(entity: OWLEntity): Node = iriToNode(entity.getIRI)
 
-  implicit def owlEntityToPath(entity: OWLEntity): P_Link = new P_Link(owlEntityToNode(entity))
+  //implicit def owlEntityToPath(entity: OWLEntity): P_Link = new P_Link(owlEntityToNode(entity))
 
-  def t(s: Node, p: Path, o: Node): TriplePath = new TriplePath(s, p, o)
+  def t(s: Node, p: Path, o: Node): PathTriple = PathTriple(s, p, o)
+
+  def t(s: Node, p: Node, o: Node): BasicTriple = BasicTriple(s, p, o)
+
+  sealed trait TripleOrPath
+
+  case class BasicTriple(s: Node, p: Node, o: Node) extends TripleOrPath
+
+  case class PathTriple(s: Node, p: Path, o: Node) extends TripleOrPath
 
   implicit def triplePathToTriple(tp: TriplePath): Triple = tp.asTriple
 
@@ -151,6 +162,11 @@ object SPARQLComposer {
       self
     }
 
+    def limit(count: Int): Query = {
+      self.setLimit(count)
+      self
+    }
+
     def into[T](func: QuerySolution => T): Query = {
       ???
     }
@@ -161,17 +177,19 @@ object SPARQLComposer {
 
     def /(rightSide: Path): P_Seq = new P_Seq(new P_Link(owlEntityToNode(self)), rightSide)
 
-    def |(rightSide: Path): P_Alt = new P_Alt(self, rightSide)
+    def /(rightSide: Node): P_Seq = new P_Seq(new P_Link(owlEntityToNode(self)), new P_Link(rightSide))
 
-    def * : P_ZeroOrMore1 = new P_ZeroOrMore1(self)
+    def |(rightSide: Path): P_Alt = new P_Alt(new P_Link(owlEntityToNode(self)), rightSide)
+
+    def * : P_ZeroOrMore1 = new P_ZeroOrMore1(new P_Link(owlEntityToNode(self)))
 
   }
 
   implicit class ComposerPath(val self: Path) extends AnyVal {
 
-    def /(rightSide: Path): P_Seq = {
-      new P_Seq(self, rightSide)
-    }
+    def /(rightSide: Path): P_Seq = new P_Seq(self, rightSide)
+
+    def /(rightSide: Node): P_Seq = new P_Seq(self, new P_Link(rightSide))
 
   }
 
