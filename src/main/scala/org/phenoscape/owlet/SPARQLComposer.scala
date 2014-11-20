@@ -180,6 +180,8 @@ object SPARQLComposer {
     def /(rightSide: Node): P_Seq = new P_Seq(new P_Link(owlEntityToNode(self)), new P_Link(rightSide))
 
     def |(rightSide: Path): P_Alt = new P_Alt(new P_Link(owlEntityToNode(self)), rightSide)
+    
+    def |(rightSide: Node): P_Alt = new P_Alt(new P_Link(owlEntityToNode(self)), new P_Link(rightSide))
 
     def * : P_ZeroOrMore1 = new P_ZeroOrMore1(new P_Link(owlEntityToNode(self)))
 
