@@ -8,7 +8,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
-	<version>1.2.1</version>
+	<version>1.2.2-SNAPSHOT</version>
 	<name>owlet</name>
 	<dependencies>
 		<dependency>
