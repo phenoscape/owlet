@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary
 import org.semanticweb.owlapi.model.IRI
 import org.junit.Assert
 import org.phenoscape.owlet.OwletManchesterSyntaxDataType._
+import com.hp.hpl.jena.sparql.expr.ExprVar
 
 class TestSPARQLComposer {
 
@@ -51,8 +52,11 @@ class TestSPARQLComposer {
             t('blah, rdfsSubClassOf / rdfType, 'blah),
             t('blah, rdfsSubClassOf / (rdfType *), 'blah),
             t('blah, rdfsSubClassOf | (rdfType*) / part_of, 'blah),
+            t('blah, rdfsSubClassOf ?, 'blah),
+            t('blah, rdfsSubClassOf +, 'blah),
             t('foo, 'pred, 'bar),
-            t('eq, rdfsSubClassOf, expression.asOMN)))) order_by 'phenotype
+            t('eq, rdfsSubClassOf, expression.asOMN)),
+          filter('eq in (owlEntityToNode(rdfType) :: owlEntityToNode(rdfsSubClassOf) :: Nil)))) order_by 'phenotype
     println(query)
   }
 

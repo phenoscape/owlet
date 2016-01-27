@@ -35,6 +35,10 @@ import com.hp.hpl.jena.graph.Triple
 import com.hp.hpl.jena.sparql.syntax.Template
 import com.hp.hpl.jena.sparql.modify.request.UpdateWithUsing
 import com.hp.hpl.jena.sparql.modify.request.UpdateDeleteInsert
+import com.hp.hpl.jena.sparql.path.P_OneOrMore1
+import com.hp.hpl.jena.sparql.expr.ExprList
+import com.hp.hpl.jena.sparql.expr.E_OneOf
+import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueNode
 
 object SPARQLComposer {
 
@@ -75,7 +79,7 @@ object SPARQLComposer {
     val block = new ElementPathBlock()
     triples.foreach {
       case triple: BasicTriple => block.addTriple(new Triple(triple.s, triple.p, triple.o))
-      case path: PathTriple => block.addTriplePath(new TriplePath(path.s, path.p, path.o))
+      case path: PathTriple    => block.addTriplePath(new TriplePath(path.s, path.p, path.o))
     }
     block
   }
@@ -131,6 +135,17 @@ object SPARQLComposer {
 
   implicit def triplePathToTriple(tp: TriplePath): Triple = tp.asTriple
 
+  //new ElementFilter(new E_OneOf(new ExprVar('matrix), new ExprList(publications.map(new NodeValueNode(_)).toList)))
+
+  def filter(in: E_OneOf): ElementFilter = new ElementFilter(in)
+
+  implicit class ComposerSymbol(val self: Symbol) extends AnyVal {
+
+    def in(list: ExprList): E_OneOf = new E_OneOf(new ExprVar(self.toString), list)
+  }
+  
+  implicit def listToExprList(list: List[Node]): ExprList = new ExprList(list)
+
   implicit class StringToLiteral(val self: String) extends AnyVal {
 
     def ^^(datatypeURI: String): Node = {
@@ -180,10 +195,14 @@ object SPARQLComposer {
     def /(rightSide: Node): P_Seq = new P_Seq(new P_Link(owlEntityToNode(self)), new P_Link(rightSide))
 
     def |(rightSide: Path): P_Alt = new P_Alt(new P_Link(owlEntityToNode(self)), rightSide)
-    
+
     def |(rightSide: Node): P_Alt = new P_Alt(new P_Link(owlEntityToNode(self)), new P_Link(rightSide))
 
     def * : P_ZeroOrMore1 = new P_ZeroOrMore1(new P_Link(owlEntityToNode(self)))
+
+    def + : P_OneOrMore1 = new P_OneOrMore1(new P_Link(owlEntityToNode(self)))
+
+    def ? : P_ZeroOrMore1 = new P_ZeroOrMore1(new P_Link(owlEntityToNode(self)))
 
   }
 
