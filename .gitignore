@@ -7,3 +7,5 @@ owlet.iml
 .cache-main
 .cache-tests
 .settings
+.classpath
+.project
