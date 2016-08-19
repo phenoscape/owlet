@@ -4,3 +4,6 @@ src/test/resources/catalog-v001.xml
 .DS_Store
 .idea
 owlet.iml
+.cache-main
+.cache-tests
+.settings
