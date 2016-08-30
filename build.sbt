@@ -3,7 +3,7 @@ organization  := "org.phenoscape"
 
 name          := "owlet"
 
-version       := "1.3-SNAPSHOT"
+version       := "1.4"
 
 scalaVersion  := "2.11.8"
 

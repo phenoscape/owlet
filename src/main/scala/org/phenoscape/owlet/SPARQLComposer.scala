@@ -188,7 +188,7 @@ object SPARQLComposer {
 
   }
 
-  implicit class ComposerProperty(val self: OWLProperty[_, _]) extends AnyVal {
+  implicit class ComposerProperty(val self: OWLProperty) extends AnyVal {
 
     def /(rightSide: Path): P_Seq = new P_Seq(new P_Link(owlEntityToNode(self)), rightSide)
 
