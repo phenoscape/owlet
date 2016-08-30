@@ -4,7 +4,7 @@ import com.hp.hpl.jena.datatypes.BaseDatatype
 import com.hp.hpl.jena.datatypes.TypeMapper
 import org.semanticweb.owlapi.model.OWLClassExpression
 import com.hp.hpl.jena.graph.Node
-import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxObjectRenderer
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer
 import org.semanticweb.owlapi.util.QNameShortFormProvider
 import scala.collection.JavaConversions._
 import java.io.StringWriter
@@ -28,10 +28,10 @@ object OwletManchesterSyntaxDataType {
     def asOMN: Node = {
       val writer = new StringWriter()
       val renderer = new ManchesterOWLSyntaxObjectRenderer(writer, FullIRIProvider)
-      renderer.setUseWrapping(false)
       self.accept(renderer: OWLClassExpressionVisitor)
       writer.close()
-      NodeFactory.createLiteral(writer.toString, TypeMapper.getInstance.getSafeTypeByName(Owlet.MANCHESTER))
+      NodeFactory.createLiteral(writer.toString.replaceAll("\n", " ").replaceAll("\\s+", " "),
+        TypeMapper.getInstance.getSafeTypeByName(Owlet.MANCHESTER))
     }
 
   }
