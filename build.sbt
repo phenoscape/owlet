@@ -3,7 +3,23 @@ organization  := "org.phenoscape"
 
 name          := "owlet"
 
-version       := "1.5-SNAPSHOT"
+version       := "1.5"
+
+publishMavenStyle := true
+
+publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value)
+        Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+}
+
+publishArtifact in Test := false
+
+licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
+
+homepage := Some(url("https://github.com/phenoscape/owlet"))
 
 scalaVersion  := "2.11.8"
 
@@ -24,3 +40,17 @@ libraryDependencies ++= {
       "junit"                      %  "junit"                    % "4.10"  % Test
     )
 }
+
+pomExtra := (
+    <scm>
+        <url>git@github.com:phenoscape/owlet.git</url>
+        <connection>scm:git:git@github.com:phenoscape/owlet.git</connection>
+    </scm>
+    <developers>
+        <developer>
+            <id>balhoff</id>
+            <name>Jim Balhoff</name>
+            <email>jim@balhoff.org</email>
+        </developer>
+    </developers>
+)
