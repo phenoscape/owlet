@@ -1,51 +1,47 @@
 package org.phenoscape.owlet
 
 import java.util.UUID
+
 import scala.collection.JavaConversions._
 import scala.collection.Map
 import scala.collection.immutable.Set
+
+import org.apache.jena.graph.Node
+import org.apache.jena.graph.NodeFactory
+import org.apache.jena.graph.Node_Literal
+import org.apache.jena.graph.Node_Variable
+import org.apache.jena.graph.Triple
+import org.apache.jena.graph.impl.GraphBase
+import org.apache.jena.query.ARQ
+import org.apache.jena.query.Query
+import org.apache.jena.query.QueryExecutionFactory
+import org.apache.jena.query.QueryFactory
+import org.apache.jena.query.ResultSet
+import org.apache.jena.rdf.model.ModelFactory
+import org.apache.jena.sparql.core.TriplePath
+import org.apache.jena.sparql.expr.E_OneOf
+import org.apache.jena.sparql.expr.ExprFunctionOp
+import org.apache.jena.sparql.expr.ExprList
+import org.apache.jena.sparql.expr.ExprVar
+import org.apache.jena.sparql.expr.nodevalue.NodeValueNode
+import org.apache.jena.sparql.syntax.ElementFilter
+import org.apache.jena.sparql.syntax.ElementGroup
+import org.apache.jena.sparql.syntax.ElementPathBlock
+import org.apache.jena.sparql.syntax.ElementVisitorBase
+import org.apache.jena.sparql.syntax.ElementWalker
+import org.apache.jena.sparql.syntax.RecursiveElementVisitor
+import org.apache.jena.util.iterator.ExtendedIterator
+import org.apache.jena.util.iterator.WrappedIterator
+import org.apache.jena.vocabulary.OWL2
+import org.apache.jena.vocabulary.RDF
+import org.apache.jena.vocabulary.RDFS
+import org.semanticweb.owlapi.apibinding.OWLManager
+import org.semanticweb.owlapi.model.IRI
 import org.semanticweb.owlapi.model.OWLClass
 import org.semanticweb.owlapi.model.OWLClassExpression
 import org.semanticweb.owlapi.model.OWLEntity
 import org.semanticweb.owlapi.model.OWLNamedIndividual
-import org.semanticweb.owlapi.model.IRI
 import org.semanticweb.owlapi.reasoner.OWLReasoner
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary
-import org.semanticweb.owlapi.apibinding.OWLManager
-import com.hp.hpl.jena.graph.NodeFactory
-import com.hp.hpl.jena.graph.Node_Literal
-import com.hp.hpl.jena.graph.Node_URI
-import com.hp.hpl.jena.graph.Node_Variable
-import com.hp.hpl.jena.query.Query
-import com.hp.hpl.jena.query.QueryExecutionFactory
-import com.hp.hpl.jena.query.QueryFactory
-import com.hp.hpl.jena.rdf.model.ModelFactory
-import com.hp.hpl.jena.sparql.core.TriplePath
-import com.hp.hpl.jena.sparql.expr.E_OneOf
-import com.hp.hpl.jena.sparql.expr.ExprFunctionOp
-import com.hp.hpl.jena.sparql.expr.ExprList
-import com.hp.hpl.jena.sparql.expr.ExprVar
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueNode
-import com.hp.hpl.jena.sparql.syntax.ElementFilter
-import com.hp.hpl.jena.sparql.syntax.ElementGroup
-import com.hp.hpl.jena.sparql.syntax.ElementPathBlock
-import com.hp.hpl.jena.sparql.syntax.ElementVisitorBase
-import com.hp.hpl.jena.sparql.syntax.ElementWalker
-import com.hp.hpl.jena.sparql.syntax.RecursiveElementVisitor
-import com.hp.hpl.jena.sparql.engine.main.StageBuilder
-import com.hp.hpl.jena.query.ARQ
-import com.hp.hpl.jena.graph.Node
-import com.hp.hpl.jena.vocabulary.RDFS
-import com.hp.hpl.jena.vocabulary.OWL2
-import com.hp.hpl.jena.vocabulary.RDF
-import com.hp.hpl.jena.graph.Triple
-import com.hp.hpl.jena.graph.impl.GraphBase
-import com.hp.hpl.jena.graph.TripleMatch
-import com.hp.hpl.jena.util.iterator.ExtendedIterator
-import com.hp.hpl.jena.util.iterator.WrappedIterator
-import com.hp.hpl.jena.query.ResultSet
-import com.hp.hpl.jena.sparql.mgt.Explain
-import scalaz.Validation
 
 /**
  * Processes SPARQL queries containing triple patterns with embedded OWL class expressions.
@@ -71,7 +67,7 @@ class Owlet(reasoner: OWLReasoner) {
 
     override def endElement(filter: ElementFilter): Unit = filter.getExpr match {
       case existsLike: ExprFunctionOp => ElementWalker.walk(existsLike.getElement, this)
-      case _ => Unit
+      case _                          => Unit
     }
 
     override def endElement(group: ElementGroup): Unit = {
@@ -161,8 +157,8 @@ class Owlet(reasoner: OWLReasoner) {
 
   private class OwletGraph(prefixes: Map[String, String]) extends GraphBase {
 
-    override def graphBaseFind(pattern: TripleMatch): ExtendedIterator[Triple] = {
-      val results = matchTriple(new TriplePath(pattern.asTriple), prefixes).map(_.toTriples).getOrElse(Set())
+    override def graphBaseFind(pattern: Triple): ExtendedIterator[Triple] = {
+      val results = matchTriple(new TriplePath(pattern), prefixes).map(_.toTriples).getOrElse(Set())
       WrappedIterator.create(results.iterator)
     }
 
@@ -185,7 +181,7 @@ object Owlet {
     val parsedExpression = parseExpression(classExpression, prefixes)
     parsedExpression match {
       case Some(expression) => Option(makeFilter(variable, queryFunction(expression)))
-      case None => None
+      case None             => None
     }
   }
 
@@ -193,7 +189,7 @@ object Owlet {
     val expression = literal.getLiteralLexicalForm
     literal.getLiteralDatatypeURI match {
       case MANCHESTER => ManchesterSyntaxClassExpressionParser.parse(expression, prefixes).toOption
-      case OWLXML => OWLXMLClassExpressionParser.parse(expression, prefixes)
+      case OWLXML     => OWLXMLClassExpressionParser.parse(expression, prefixes)
       case FUNCTIONAL => parseFunctional(expression, prefixes)
     }
   }

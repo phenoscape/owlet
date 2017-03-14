@@ -1,17 +1,16 @@
 package org.phenoscape.owlet
 
-import com.hp.hpl.jena.datatypes.BaseDatatype
-import com.hp.hpl.jena.datatypes.TypeMapper
-import org.semanticweb.owlapi.model.OWLClassExpression
-import com.hp.hpl.jena.graph.Node
-import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer
-import org.semanticweb.owlapi.util.QNameShortFormProvider
-import scala.collection.JavaConversions._
+
 import java.io.StringWriter
-import com.hp.hpl.jena.graph.NodeFactory
+
+import org.apache.jena.datatypes.TypeMapper
+import org.apache.jena.graph.Node
+import org.apache.jena.graph.NodeFactory
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer
+import org.semanticweb.owlapi.model.OWLClassExpression
 import org.semanticweb.owlapi.model.OWLClassExpressionVisitor
-import org.semanticweb.owlapi.util.ShortFormProvider
 import org.semanticweb.owlapi.model.OWLEntity
+import org.semanticweb.owlapi.util.ShortFormProvider
 
 object OwletManchesterSyntaxDataType {
 

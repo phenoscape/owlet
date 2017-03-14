@@ -1,6 +1,6 @@
 package org.phenoscape.owlet
 
-import org.apache.jena.riot.out.EscapeStr
+import org.apache.jena.atlas.lib.EscapeStr
 import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.BeforeClass

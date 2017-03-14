@@ -1,17 +1,15 @@
 package org.phenoscape.owlet
 
 import org.semanticweb.owlapi.model.OWLEntity
-import com.hp.hpl.jena.graph.Node_Variable
-import com.hp.hpl.jena.graph.Triple
-import com.hp.hpl.jena.sparql.expr.E_OneOf
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueNode
-import com.hp.hpl.jena.sparql.syntax.ElementFilter
-import com.hp.hpl.jena.sparql.expr.ExprList
-import com.hp.hpl.jena.sparql.expr.ExprVar
-import com.hp.hpl.jena.graph.NodeFactory
+
 import scala.collection.JavaConversions._
-import com.hp.hpl.jena.graph.Node
+
 import org.apache.log4j.Logger
+import org.apache.jena.graph.Node_Variable
+import org.apache.jena.graph.NodeFactory
+import org.apache.jena.graph.Node
+import org.apache.jena.sparql.syntax.ElementFilter
+import org.apache.jena.graph.Triple
 
 case class OwletResult(triple: Triple, terms: Set[_ <: OWLEntity]) {
 

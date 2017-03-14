@@ -1,16 +1,17 @@
 package org.phenoscape.owlet
 
+import scala.collection.JavaConversions._
+
+import org.apache.jena.query.QueryExecutionFactory
+import org.apache.jena.query.QueryFactory
+import org.apache.jena.rdf.model.ModelFactory
+import org.junit.AfterClass
 import org.junit.Assert
+import org.junit.BeforeClass
 import org.junit.Test
 import org.semanticweb.elk.owlapi.ElkReasonerFactory
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.reasoner.InferenceType
-import com.hp.hpl.jena.query.QueryExecutionFactory
-import com.hp.hpl.jena.query.QueryFactory
-import com.hp.hpl.jena.rdf.model.ModelFactory
-import scala.collection.JavaConversions._
-import org.junit.BeforeClass
-import org.junit.AfterClass
 import org.semanticweb.owlapi.reasoner.OWLReasoner
 
 object TestSPARQLQuery {

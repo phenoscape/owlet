@@ -1,44 +1,43 @@
 package org.phenoscape.owlet
 
-import scala.collection.JavaConverters.asScalaSetConverter
+import scala.collection.JavaConverters._
+
+import org.apache.jena.datatypes.RDFDatatype
+import org.apache.jena.datatypes.TypeMapper
+import org.apache.jena.graph.Node
+import org.apache.jena.graph.NodeFactory
+import org.apache.jena.graph.Triple
+import org.apache.jena.query.Query
+import org.apache.jena.query.QueryFactory
+import org.apache.jena.query.QuerySolution
+import org.apache.jena.query.SortCondition
+import org.apache.jena.sparql.core.BasicPattern
+import org.apache.jena.sparql.core.TriplePath
+import org.apache.jena.sparql.core.Var
+import org.apache.jena.sparql.expr.E_OneOf
+import org.apache.jena.sparql.expr.E_Str
+import org.apache.jena.sparql.expr.Expr
+import org.apache.jena.sparql.expr.ExprList
+import org.apache.jena.sparql.expr.ExprVar
+import org.apache.jena.sparql.expr.NodeValue
+import org.apache.jena.sparql.path.P_Alt
+import org.apache.jena.sparql.path.P_Link
+import org.apache.jena.sparql.path.P_OneOrMore1
+import org.apache.jena.sparql.path.P_Seq
+import org.apache.jena.sparql.path.P_ZeroOrMore1
+import org.apache.jena.sparql.path.Path
+import org.apache.jena.sparql.syntax.Element
+import org.apache.jena.sparql.syntax.ElementFilter
+import org.apache.jena.sparql.syntax.ElementGroup
+import org.apache.jena.sparql.syntax.ElementOptional
+import org.apache.jena.sparql.syntax.ElementPathBlock
+import org.apache.jena.sparql.syntax.ElementService
+import org.apache.jena.sparql.syntax.Template
 import org.semanticweb.owlapi.model.IRI
 import org.semanticweb.owlapi.model.OWLClassExpression
 import org.semanticweb.owlapi.model.OWLEntity
 import org.semanticweb.owlapi.model.OWLProperty
 import org.semanticweb.owlapi.reasoner.OWLReasoner
-import com.hp.hpl.jena.graph.Node
-import com.hp.hpl.jena.graph.NodeFactory
-import com.hp.hpl.jena.query.Query
-import com.hp.hpl.jena.query.QueryFactory
-import com.hp.hpl.jena.sparql.core.TriplePath
-import com.hp.hpl.jena.sparql.core.Var
-import com.hp.hpl.jena.sparql.expr.E_Str
-import com.hp.hpl.jena.sparql.expr.ExprVar
-import com.hp.hpl.jena.sparql.path.P_Link
-import com.hp.hpl.jena.sparql.path.P_Seq
-import com.hp.hpl.jena.sparql.path.Path
-import com.hp.hpl.jena.sparql.syntax.Element
-import com.hp.hpl.jena.sparql.syntax.ElementFilter
-import com.hp.hpl.jena.sparql.syntax.ElementGroup
-import com.hp.hpl.jena.sparql.syntax.ElementPathBlock
-import com.hp.hpl.jena.sparql.path.P_ZeroOrMore1
-import com.hp.hpl.jena.sparql.syntax.ElementService
-import com.hp.hpl.jena.datatypes.TypeMapper
-import com.hp.hpl.jena.datatypes.RDFDatatype
-import com.hp.hpl.jena.sparql.syntax.ElementOptional
-import com.hp.hpl.jena.query.SortCondition
-import com.hp.hpl.jena.sparql.path.P_Alt
-import com.hp.hpl.jena.query.QuerySolution
-import com.hp.hpl.jena.sparql.core.BasicPattern
-import scala.collection.JavaConverters._
-import com.hp.hpl.jena.graph.Triple
-import com.hp.hpl.jena.sparql.syntax.Template
-import com.hp.hpl.jena.sparql.modify.request.UpdateWithUsing
-import com.hp.hpl.jena.sparql.modify.request.UpdateDeleteInsert
-import com.hp.hpl.jena.sparql.path.P_OneOrMore1
-import com.hp.hpl.jena.sparql.expr.ExprList
-import com.hp.hpl.jena.sparql.expr.E_OneOf
-import com.hp.hpl.jena.sparql.expr.nodevalue.NodeValueNode
 
 object SPARQLComposer {
 
@@ -143,8 +142,11 @@ object SPARQLComposer {
 
     def in(list: ExprList): E_OneOf = new E_OneOf(new ExprVar(self.toString), list)
   }
-  
-  implicit def listToExprList(list: List[Node]): ExprList = new ExprList(list)
+
+  implicit def listToExprList(list: List[Node]): ExprList = {
+    val exprs: List[Expr] = list.map(NodeValue.makeNode(_))
+    new ExprList(exprs.asJava)
+  }
 
   implicit class StringToLiteral(val self: String) extends AnyVal {
 

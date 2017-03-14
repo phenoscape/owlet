@@ -3,6 +3,12 @@ package org.phenoscape.owlet;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.Test;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -11,13 +17,6 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class TestSPARQLQueryJava {
 
@@ -38,13 +37,9 @@ public class TestSPARQLQueryJava {
 				+ "PREFIX axial_skeleton: <http://purl.obolibrary.org/obo/VSAO_0000056>\n"
 				+ "PREFIX definition: <http://purl.obolibrary.org/obo/IAO_0000115>\n"
 				+ "PREFIX part_of: <http://purl.obolibrary.org/obo/BFO_0000050>\n"
-				+ "SELECT DISTINCT ?structure ?label ?definition\n"
-				+ "WHERE\n"
-				+ "{\n"
-				+ "?structure rdfs:label ?label .\n"
-				+ "?structure definition: ?definition .\n"
-				+ "?structure rdfs:subClassOf \"part_of: some axial_skeleton:\"^^ow:omn .\n"
-				+ "}";
+				+ "SELECT DISTINCT ?structure ?label ?definition\n" + "WHERE\n" + "{\n"
+				+ "?structure rdfs:label ?label .\n" + "?structure definition: ?definition .\n"
+				+ "?structure rdfs:subClassOf \"part_of: some axial_skeleton:\"^^ow:omn .\n" + "}";
 
 		final Owlet owlet = new Owlet(reasoner);
 		final Query query = QueryFactory.create(queryText);
