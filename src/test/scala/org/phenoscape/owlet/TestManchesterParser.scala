@@ -40,6 +40,15 @@ class TestManchesterParser {
     val parsed6 = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> and <http://example.org/part_of> some <http://example.org/head>").toOption.get
     Assert.assertEquals(factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectSomeValuesFrom(part_of, head)), parsed6)
 
+    val parsed6a = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> that <http://example.org/part_of> some <http://example.org/head>").toOption.get
+    Assert.assertEquals(factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectSomeValuesFrom(part_of, head)), parsed6a)
+
+    val parsed6b = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> that not <http://example.org/part_of> some <http://example.org/head>").toOption.get
+    Assert.assertEquals(factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectComplementOf(factory.getOWLObjectSomeValuesFrom(part_of, head))), parsed6b)
+
+    val parsed6c = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> that not <http://example.org/part_of> some <http://example.org/head> and <http://example.org/part_of> some <http://example.org/eye>").toOption.get
+    Assert.assertEquals(factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectComplementOf(factory.getOWLObjectSomeValuesFrom(part_of, head)), factory.getOWLObjectSomeValuesFrom(part_of, eye)), parsed6c)
+
     val parsed7 = ManchesterSyntaxClassExpressionParser.parse("not <http://example.org/muscle> and <http://example.org/part_of> some <http://example.org/head>").toOption.get
     Assert.assertEquals(factory.getOWLObjectIntersectionOf(factory.getOWLObjectComplementOf(muscle), factory.getOWLObjectSomeValuesFrom(part_of, head)), parsed7)
 

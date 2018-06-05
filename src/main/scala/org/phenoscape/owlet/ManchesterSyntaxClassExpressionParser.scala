@@ -3,6 +3,7 @@ package org.phenoscape.owlet
 import scala.collection.JavaConverters._
 import scala.collection.Map
 import scala.util.parsing.combinator.RegexParsers
+
 import org.apache.log4j.Logger
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.IRI
@@ -24,7 +25,8 @@ import org.semanticweb.owlapi.model.OWLObjectProperty
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom
 import org.semanticweb.owlapi.vocab.XSDVocabulary
-import scalaz.Validation
+
+import scalaz._
 
 object ManchesterSyntaxClassExpressionParser {
 
@@ -121,7 +123,15 @@ object ManchesterSyntaxClassExpressionParser {
       case _ => factory.getOWLObjectUnionOf(in.toSet.asJava)
     })
 
-    def conjunction: Parser[OWLClassExpression] = //classIRI ~ "that" ~ opt("not") ~ restriction ~ rep("and" ~ opt("not") ~ restriction) |
+    def conjunction: Parser[OWLClassExpression] = classIRI ~ ("that" ~> opt("not") ~ restriction ~ rep("and" ~> (opt("not") ~ restriction))) ^^ {
+      case (named ~ (maybeNot ~ restr ~ moreRestrictions)) =>
+        val differentia = maybeNot.map(_ => factory.getOWLObjectComplementOf(restr)).getOrElse(restr)
+        val moreRestrictionsList = moreRestrictions.map {
+          case (moreMaybeNot ~ moreRestriction) => moreMaybeNot.map(_ => factory.getOWLObjectComplementOf(moreRestriction)).getOrElse(moreRestriction)
+        }
+        val args = named :: differentia :: moreRestrictionsList
+        factory.getOWLObjectIntersectionOf(args: _*)
+    } |
       repsep(primary, "and") ^^ (in => in.size match {
         case 1 => in.head
         case _ => factory.getOWLObjectIntersectionOf(in.toSet.asJava)
@@ -147,17 +157,17 @@ object ManchesterSyntaxClassExpressionParser {
 
     def objectMinCardinality: Parser[OWLObjectMinCardinality] = objectPropertyExpression ~ ("min" ~> nonNegativeInteger) ~ opt(primary) ^^ {
       case prop ~ cardinality ~ Some(filler) => factory.getOWLObjectMinCardinality(cardinality, prop, filler)
-      case prop ~ cardinality ~ None => factory.getOWLObjectMinCardinality(cardinality, prop)
+      case prop ~ cardinality ~ None         => factory.getOWLObjectMinCardinality(cardinality, prop)
     }
 
     def objectMaxCardinality: Parser[OWLObjectMaxCardinality] = objectPropertyExpression ~ ("max" ~> nonNegativeInteger) ~ opt(primary) ^^ {
       case prop ~ cardinality ~ Some(filler) => factory.getOWLObjectMaxCardinality(cardinality, prop, filler)
-      case prop ~ cardinality ~ None => factory.getOWLObjectMaxCardinality(cardinality, prop)
+      case prop ~ cardinality ~ None         => factory.getOWLObjectMaxCardinality(cardinality, prop)
     }
 
     def objectExactCardinality: Parser[OWLObjectExactCardinality] = objectPropertyExpression ~ ("exactly" ~> nonNegativeInteger) ~ opt(primary) ^^ {
       case prop ~ cardinality ~ Some(filler) => factory.getOWLObjectExactCardinality(cardinality, prop, filler)
-      case prop ~ cardinality ~ None => factory.getOWLObjectExactCardinality(cardinality, prop)
+      case prop ~ cardinality ~ None         => factory.getOWLObjectExactCardinality(cardinality, prop)
     }
 
     //dataPropertyExpression ~ "some" ~ dataPrimary |
@@ -173,14 +183,14 @@ object ManchesterSyntaxClassExpressionParser {
 
     def parseExpression(expression: String): Validation[String, OWLClassExpression] = {
       parseAll(description, expression) match {
-        case Success(result, remainder) => Validation.success(result)
+        case Success(result, remainder)    => Validation.success(result)
         case NoSuccess(message, remainder) => Validation.failure(message)
       }
     }
 
     def parseIRI(input: String): Validation[String, IRI] = {
       parseAll(iri, input) match {
-        case Success(result, remainder) => Validation.success(result)
+        case Success(result, remainder)    => Validation.success(result)
         case NoSuccess(message, remainder) => Validation.failure(message)
       }
     }
