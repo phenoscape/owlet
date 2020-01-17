@@ -4,12 +4,9 @@ package org.phenoscape.owlet
 import java.io.StringWriter
 
 import org.apache.jena.datatypes.TypeMapper
-import org.apache.jena.graph.Node
-import org.apache.jena.graph.NodeFactory
+import org.apache.jena.graph.{Node, NodeFactory}
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer
-import org.semanticweb.owlapi.model.OWLClassExpression
-import org.semanticweb.owlapi.model.OWLClassExpressionVisitor
-import org.semanticweb.owlapi.model.OWLEntity
+import org.semanticweb.owlapi.model.{OWLClassExpression, OWLClassExpressionVisitor, OWLEntity}
 import org.semanticweb.owlapi.util.ShortFormProvider
 
 object OwletManchesterSyntaxDataType {
@@ -18,7 +15,7 @@ object OwletManchesterSyntaxDataType {
 
     def getShortForm(entity: OWLEntity): String = s"<${entity.getIRI.toString}>"
 
-    def dispose(): Unit = Unit
+    def dispose(): Unit = ()
 
   }
 

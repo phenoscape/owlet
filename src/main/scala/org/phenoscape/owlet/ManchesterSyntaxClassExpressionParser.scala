@@ -1,32 +1,14 @@
 package org.phenoscape.owlet
 
+import org.apache.log4j.Logger
+import org.semanticweb.owlapi.apibinding.OWLManager
+import org.semanticweb.owlapi.model._
+import org.semanticweb.owlapi.vocab.XSDVocabulary
+import scalaz._
+
 import scala.collection.JavaConverters._
 import scala.collection.Map
 import scala.util.parsing.combinator.RegexParsers
-
-import org.apache.log4j.Logger
-import org.semanticweb.owlapi.apibinding.OWLManager
-import org.semanticweb.owlapi.model.IRI
-import org.semanticweb.owlapi.model.OWLClass
-import org.semanticweb.owlapi.model.OWLClassExpression
-import org.semanticweb.owlapi.model.OWLDataProperty
-import org.semanticweb.owlapi.model.OWLDatatype
-import org.semanticweb.owlapi.model.OWLNamedIndividual
-import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom
-import org.semanticweb.owlapi.model.OWLObjectComplementOf
-import org.semanticweb.owlapi.model.OWLObjectExactCardinality
-import org.semanticweb.owlapi.model.OWLObjectHasSelf
-import org.semanticweb.owlapi.model.OWLObjectHasValue
-import org.semanticweb.owlapi.model.OWLObjectInverseOf
-import org.semanticweb.owlapi.model.OWLObjectMaxCardinality
-import org.semanticweb.owlapi.model.OWLObjectMinCardinality
-import org.semanticweb.owlapi.model.OWLObjectOneOf
-import org.semanticweb.owlapi.model.OWLObjectProperty
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression
-import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom
-import org.semanticweb.owlapi.vocab.XSDVocabulary
-
-import scalaz._
 
 object ManchesterSyntaxClassExpressionParser {
 

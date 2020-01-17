@@ -1,6 +1,6 @@
 package org.phenoscape.owlet
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import org.apache.jena.query.QueryExecutionFactory
 import org.apache.jena.query.QueryFactory
@@ -63,7 +63,7 @@ class TestSPARQLQuery {
     Assert.assertFalse("Shouldn't get any results before expansion", unexpandedResults.hasNext)
     val expandedQuery = owlet.expandQuery(query)
     val results = QueryExecutionFactory.create(expandedQuery, vsaoRDF).execSelect()
-    Assert.assertEquals("Should get seven results", 7, results.length)
+    Assert.assertEquals("Should get seven results", 7, results.asScala.length)
   }
 
   //@Test
@@ -81,7 +81,7 @@ class TestSPARQLQuery {
 					?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^ow:omn .
 					}
 					"""
-    Assert.assertEquals("Should get nine results", 9, owlet.performSPARQLQuery(QueryFactory.create(basicQuery)).length)
+    Assert.assertEquals("Should get nine results", 9, owlet.performSPARQLQuery(QueryFactory.create(basicQuery)).asScala.length)
 
     val queryWithValues = """
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -96,7 +96,7 @@ class TestSPARQLQuery {
 					?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^ow:omn .
 					}
 					"""
-    Assert.assertEquals("Should get one result", 1, owlet.performSPARQLQuery(QueryFactory.create(queryWithValues)).length)
+    Assert.assertEquals("Should get one result", 1, owlet.performSPARQLQuery(QueryFactory.create(queryWithValues)).asScala.length)
 
     val queryWithStar = """
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -110,7 +110,7 @@ class TestSPARQLQuery {
 					?structure rdfs:subClassOf* "part_of: some axial_skeleton:"^^ow:omn .
 					}
 					"""
-    Assert.assertEquals("Should get ten results (query engine includes expression as a result)", 10, owlet.performSPARQLQuery(QueryFactory.create(queryWithStar)).length)
+    Assert.assertEquals("Should get ten results (query engine includes expression as a result)", 10, owlet.performSPARQLQuery(QueryFactory.create(queryWithStar)).asScala.length)
 
     val queryWithPlus = """
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -124,7 +124,7 @@ class TestSPARQLQuery {
 					?structure rdfs:subClassOf+ "part_of: some axial_skeleton:"^^ow:omn .
 					}
 					"""
-    Assert.assertEquals("Should get nine results", 9, owlet.performSPARQLQuery(QueryFactory.create(queryWithPlus)).length)
+    Assert.assertEquals("Should get nine results", 9, owlet.performSPARQLQuery(QueryFactory.create(queryWithPlus)).asScala.length)
 
     val queryWithQuestionMark = """
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -138,7 +138,7 @@ class TestSPARQLQuery {
 					?structure rdfs:subClassOf? "part_of: some axial_skeleton:"^^ow:omn .
 					}
 					"""
-    Assert.assertEquals("Should get ten results (query engine includes expression as a result)", 10, owlet.performSPARQLQuery(QueryFactory.create(queryWithQuestionMark)).length)
+    Assert.assertEquals("Should get ten results (query engine includes expression as a result)", 10, owlet.performSPARQLQuery(QueryFactory.create(queryWithQuestionMark)).asScala.length)
 
     val queryWithAlternative = """
 					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -153,7 +153,7 @@ class TestSPARQLQuery {
 					?structure rdfs:subClassOf|owl:equivalentClass "skeletal_element: and (has_part: some bone_tissue:)"^^ow:omn .
 					}
 					"""
-    Assert.assertEquals("Should get nineteen results", 19, owlet.performSPARQLQuery(QueryFactory.create(queryWithAlternative)).length)
+    Assert.assertEquals("Should get nineteen results", 19, owlet.performSPARQLQuery(QueryFactory.create(queryWithAlternative)).asScala.length)
   }
 
 }

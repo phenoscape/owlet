@@ -1,43 +1,16 @@
 package org.phenoscape.owlet
 
-import scala.collection.JavaConverters._
-
-import org.apache.jena.datatypes.RDFDatatype
-import org.apache.jena.datatypes.TypeMapper
-import org.apache.jena.graph.Node
-import org.apache.jena.graph.NodeFactory
-import org.apache.jena.graph.Triple
-import org.apache.jena.query.Query
-import org.apache.jena.query.QueryFactory
-import org.apache.jena.query.QuerySolution
-import org.apache.jena.query.SortCondition
-import org.apache.jena.sparql.core.BasicPattern
-import org.apache.jena.sparql.core.TriplePath
-import org.apache.jena.sparql.core.Var
-import org.apache.jena.sparql.expr.E_OneOf
-import org.apache.jena.sparql.expr.E_Str
-import org.apache.jena.sparql.expr.Expr
-import org.apache.jena.sparql.expr.ExprList
-import org.apache.jena.sparql.expr.ExprVar
-import org.apache.jena.sparql.expr.NodeValue
-import org.apache.jena.sparql.path.P_Alt
-import org.apache.jena.sparql.path.P_Link
-import org.apache.jena.sparql.path.P_OneOrMore1
-import org.apache.jena.sparql.path.P_Seq
-import org.apache.jena.sparql.path.P_ZeroOrMore1
-import org.apache.jena.sparql.path.Path
-import org.apache.jena.sparql.syntax.Element
-import org.apache.jena.sparql.syntax.ElementFilter
-import org.apache.jena.sparql.syntax.ElementGroup
-import org.apache.jena.sparql.syntax.ElementOptional
-import org.apache.jena.sparql.syntax.ElementPathBlock
-import org.apache.jena.sparql.syntax.ElementService
-import org.apache.jena.sparql.syntax.Template
-import org.semanticweb.owlapi.model.IRI
-import org.semanticweb.owlapi.model.OWLClassExpression
-import org.semanticweb.owlapi.model.OWLEntity
-import org.semanticweb.owlapi.model.OWLProperty
+import org.apache.jena.datatypes.{RDFDatatype, TypeMapper}
+import org.apache.jena.graph.{Node, NodeFactory, Triple}
+import org.apache.jena.query.{Query, QueryFactory, QuerySolution, SortCondition}
+import org.apache.jena.sparql.core.{BasicPattern, TriplePath, Var}
+import org.apache.jena.sparql.expr._
+import org.apache.jena.sparql.path._
+import org.apache.jena.sparql.syntax._
+import org.semanticweb.owlapi.model.{IRI, OWLClassExpression, OWLEntity, OWLProperty}
 import org.semanticweb.owlapi.reasoner.OWLReasoner
+
+import scala.collection.JavaConverters._
 
 object SPARQLComposer {
 

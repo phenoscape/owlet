@@ -1,12 +1,13 @@
 package org.phenoscape.owlet
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.{Assert, Test}
 import org.phenoscape.owlet.OwletManchesterSyntaxDataType._
 import org.phenoscape.owlet.SPARQLComposer._
 import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.IRI
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary
+
+import scala.language.postfixOps
 
 class TestSPARQLComposer {
 

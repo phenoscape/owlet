@@ -3,7 +3,7 @@ organization  := "org.phenoscape"
 
 name          := "owlet"
 
-version       := "1.6.1"
+version       := "1.6.2"
 
 publishMavenStyle := true
 
@@ -21,9 +21,9 @@ licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
 
 homepage := Some(url("https://github.com/phenoscape/owlet"))
 
-scalaVersion  := "2.12.2"
+scalaVersion  := "2.13.1"
 
-crossScalaVersions := Seq("2.11.8", "2.12.2")
+crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1")
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
@@ -31,15 +31,16 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 
 libraryDependencies ++= {
     Seq(
-      "org.scalaz"                 %% "scalaz-core"              % "7.2.9",
-      "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.2.8",
-      "org.apache.jena"            %  "apache-jena-libs"         % "3.2.0",
-      "com.typesafe.scala-logging" %% "scala-logging"            % "3.7.1",
-      "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.21",
-      "org.scala-lang.modules"     %% "scala-parser-combinators" % "1.0.5",
-      "org.scala-lang.modules"     %% "scala-xml"                % "1.0.6",
+      "org.scalaz"                 %% "scalaz-core"              % "7.2.30",
+      "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.14",
+      "org.apache.jena"            %  "apache-jena-libs"         % "3.13.1",
+      "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.2",
+      "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.30",
+      "org.scala-lang.modules"     %% "scala-parser-combinators" % "1.1.2",
+      "org.scala-lang.modules"     %% "scala-xml"                % "1.2.0",
       "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3" % Test,
-      "junit"                      %  "junit"                    % "4.10"  % Test
+      "junit"                      %  "junit"                    % "4.13"  % Test,
+      "com.novocode"               % "junit-interface"           % "0.11"  % Test
     )
 }
 
