@@ -1,6 +1,6 @@
 package org.phenoscape.owlet
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.Map
 import scala.xml.Elem
 import scala.xml.XML
@@ -71,12 +71,12 @@ object OWLXMLClassExpressionParser {
 
   def parseObjectIntersectionOf(element: Elem, prefixes: Map[String, String]): OWLObjectIntersectionOf = {
     val classes = children(element) map (parseClassExpression(_, prefixes))
-    factory.getOWLObjectIntersectionOf(classes.toSet)
+    factory.getOWLObjectIntersectionOf(classes.toSet.asJava)
   }
 
   def parseObjectUnionOf(element: Elem, prefixes: Map[String, String]): OWLObjectUnionOf = {
     val classes = children(element) map (parseClassExpression(_, prefixes))
-    factory.getOWLObjectUnionOf(classes.toSet)
+    factory.getOWLObjectUnionOf(classes.toSet.asJava)
   }
 
   def parseObjectSomeValuesFrom(element: Elem, prefixes: Map[String, String]): OWLObjectSomeValuesFrom = {
@@ -105,7 +105,7 @@ object OWLXMLClassExpressionParser {
 
   def parseObjectOneOf(element: Elem, prefixes: Map[String, String]): OWLObjectOneOf = {
     val individuals = children(element) map (parseIndividual(_, prefixes))
-    factory.getOWLObjectOneOf(individuals.toSet)
+    factory.getOWLObjectOneOf(individuals.toSet.asJava)
   }
 
   def parseObjectHasValue(element: Elem, prefixes: Map[String, String]): OWLObjectHasValue = {

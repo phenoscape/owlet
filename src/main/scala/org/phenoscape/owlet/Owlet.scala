@@ -2,46 +2,23 @@ package org.phenoscape.owlet
 
 import java.util.UUID
 
-import scala.collection.JavaConversions._
-import scala.collection.Map
-import scala.collection.immutable.Set
-
-import org.apache.jena.graph.Node
-import org.apache.jena.graph.NodeFactory
-import org.apache.jena.graph.Node_Literal
-import org.apache.jena.graph.Node_Variable
-import org.apache.jena.graph.Triple
+import org.apache.jena.graph._
 import org.apache.jena.graph.impl.GraphBase
-import org.apache.jena.query.ARQ
-import org.apache.jena.query.Query
-import org.apache.jena.query.QueryExecutionFactory
-import org.apache.jena.query.QueryFactory
-import org.apache.jena.query.ResultSet
+import org.apache.jena.query._
 import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.sparql.core.TriplePath
-import org.apache.jena.sparql.expr.E_OneOf
-import org.apache.jena.sparql.expr.ExprFunctionOp
-import org.apache.jena.sparql.expr.ExprList
-import org.apache.jena.sparql.expr.ExprVar
 import org.apache.jena.sparql.expr.nodevalue.NodeValueNode
-import org.apache.jena.sparql.syntax.ElementFilter
-import org.apache.jena.sparql.syntax.ElementGroup
-import org.apache.jena.sparql.syntax.ElementPathBlock
-import org.apache.jena.sparql.syntax.ElementVisitorBase
-import org.apache.jena.sparql.syntax.ElementWalker
-import org.apache.jena.sparql.syntax.RecursiveElementVisitor
-import org.apache.jena.util.iterator.ExtendedIterator
-import org.apache.jena.util.iterator.WrappedIterator
-import org.apache.jena.vocabulary.OWL2
-import org.apache.jena.vocabulary.RDF
-import org.apache.jena.vocabulary.RDFS
+import org.apache.jena.sparql.expr._
+import org.apache.jena.sparql.syntax._
+import org.apache.jena.util.iterator.{ExtendedIterator, WrappedIterator}
+import org.apache.jena.vocabulary.{OWL2, RDF, RDFS}
 import org.semanticweb.owlapi.apibinding.OWLManager
-import org.semanticweb.owlapi.model.IRI
-import org.semanticweb.owlapi.model.OWLClass
-import org.semanticweb.owlapi.model.OWLClassExpression
-import org.semanticweb.owlapi.model.OWLEntity
-import org.semanticweb.owlapi.model.OWLNamedIndividual
+import org.semanticweb.owlapi.model._
 import org.semanticweb.owlapi.reasoner.OWLReasoner
+
+import scala.collection.JavaConverters._
+import scala.collection.Map
+import scala.collection.immutable.Set
 
 /**
  * Processes SPARQL queries containing triple patterns with embedded OWL class expressions.
@@ -59,7 +36,7 @@ class Owlet(reasoner: OWLReasoner) {
 
   def expandQuery(query: Query): Query = {
     val prefixMap = query.getPrefixMapping.getNsPrefixMap
-    ElementWalker.walk(query.getQueryPattern, new SPARQLVisitor(prefixMap))
+    ElementWalker.walk(query.getQueryPattern, new SPARQLVisitor(prefixMap.asScala))
     query
   }
 
@@ -67,27 +44,28 @@ class Owlet(reasoner: OWLReasoner) {
 
     override def endElement(filter: ElementFilter): Unit = filter.getExpr match {
       case existsLike: ExprFunctionOp => ElementWalker.walk(existsLike.getElement, this)
-      case _                          => Unit
+      case _                          => ()
     }
 
     override def endElement(group: ElementGroup): Unit = {
-      for (pathBlock <- group.getElements.collect({ case pb: ElementPathBlock => pb })) {
+      for (pathBlock <- group.getElements.asScala.collect({ case pb: ElementPathBlock => pb })) {
         val patterns = pathBlock.getPattern.iterator
-        for {
-          pattern <- patterns
-          result <- matchTriple(pattern, prefixes)
-          filter <- result.toFilter
-        } {
-          patterns.remove()
-          group.addElement(filter)
+        while (patterns.hasNext) {
+          val pattern = patterns.next()
+          for {
+            result <- matchTriple(pattern, prefixes)
+            filter <- result.toFilter
+          } {
+            patterns.remove()
+            group.addElement(filter)
+          }
         }
       }
     }
-
   }
 
   private def querySubClasses(expression: OWLClassExpression): Set[OWLClass] = {
-    val subclasses = reasoner.getSubClasses(expression, false).getFlattened.toSet
+    val subclasses = reasoner.getSubClasses(expression, false).getFlattened.asScala.toSet
     if (!expression.isAnonymous)
       subclasses + expression.asOWLClass
     else
@@ -95,7 +73,7 @@ class Owlet(reasoner: OWLReasoner) {
   }
 
   private def queryEquivalentClasses(expression: OWLClassExpression): Set[OWLClass] = {
-    val equivalents = reasoner.getEquivalentClasses(expression).getEntities.toSet
+    val equivalents = reasoner.getEquivalentClasses(expression).getEntities.asScala.toSet
     if (!expression.isAnonymous)
       equivalents + expression.asOWLClass
     else
@@ -103,28 +81,28 @@ class Owlet(reasoner: OWLReasoner) {
   }
 
   private def querySuperClasses(expression: OWLClassExpression): Set[OWLClass] = {
-    val superclasses = reasoner.getSuperClasses(expression, false).getFlattened.toSet
+    val superclasses = reasoner.getSuperClasses(expression, false).getFlattened.asScala.toSet
     if (!expression.isAnonymous)
       superclasses + expression.asOWLClass
     else
       superclasses
   }
 
-  private def queryIndividuals(expression: OWLClassExpression): Set[OWLNamedIndividual] = reasoner.getInstances(expression, false).getFlattened.toSet
+  private def queryIndividuals(expression: OWLClassExpression): Set[OWLNamedIndividual] = reasoner.getInstances(expression, false).getFlattened.asScala.toSet
 
   private def matchTriple(triple: TriplePath, prefixes: Map[String, String]): Option[OwletResult] = for {
     (expression, queryFunction) <- (triple.getSubject, triple.getPredicate, triple.getObject) match {
-      case (_: Node_Variable | Node.ANY, Owlet.SubClassOf, expression: Node_Literal) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
+      case (_: Node_Variable | Node.ANY, Owlet.SubClassOf, expression: Node_Literal) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI)      =>
         Option(expression, querySubClasses _)
-      case (expression: Node_Literal, Owlet.SubClassOf, _: Node_Variable | Node.ANY) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
+      case (expression: Node_Literal, Owlet.SubClassOf, _: Node_Variable | Node.ANY) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI)      =>
         Option(expression, querySuperClasses _)
       case (_: Node_Variable | Node.ANY, Owlet.EquivalentClass, expression: Node_Literal) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
         Option(expression, queryEquivalentClasses _)
       case (expression: Node_Literal, Owlet.EquivalentClass, _: Node_Variable | Node.ANY) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
         Option(expression, queryEquivalentClasses _)
-      case (_: Node_Variable | Node.ANY, Owlet.Type, expression: Node_Literal) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI) =>
+      case (_: Node_Variable | Node.ANY, Owlet.Type, expression: Node_Literal) if Owlet.SYNTAXES(expression.getLiteralDatatypeURI)            =>
         Option(expression, queryIndividuals _)
-      case _ => None
+      case _                                                                                                                                  => None
     }
     classExpression <- Owlet.parseExpression(expression, prefixes)
   } yield {
@@ -134,7 +112,7 @@ class Owlet(reasoner: OWLReasoner) {
 
   def addQueryAsClass(expression: OWLClassExpression): OWLClass = expression match {
     case named: OWLClass => named
-    case anonymous => {
+    case anonymous       => {
       val ontology = reasoner.getRootOntology
       val manager = ontology.getOWLOntologyManager
       val namedQuery = factory.getOWLClass(IRI.create(s"http://example.org/${UUID.randomUUID.toString}"))
@@ -145,7 +123,7 @@ class Owlet(reasoner: OWLReasoner) {
   }
 
   def performSPARQLQuery(query: Query): ResultSet = {
-    val prefixMap = query.getPrefixMapping.getNsPrefixMap.toMap
+    val prefixMap = query.getPrefixMapping.getNsPrefixMap.asScala.toMap
     val model = ModelFactory.createModelForGraph(new OwletGraph(prefixMap))
     val queryExecution = QueryExecutionFactory.create(query, model)
     // The query optimizer must be turned off so that the OWL reasoner 
@@ -159,7 +137,7 @@ class Owlet(reasoner: OWLReasoner) {
 
     override def graphBaseFind(pattern: Triple): ExtendedIterator[Triple] = {
       val results = matchTriple(new TriplePath(pattern), prefixes).map(_.toTriples).getOrElse(Set())
-      WrappedIterator.create(results.iterator)
+      WrappedIterator.create(results.iterator.asJava)
     }
 
   }
@@ -198,7 +176,7 @@ object Owlet {
 
   def makeFilter(variable: Node_Variable, classes: Iterable[OWLEntity]): ElementFilter = {
     val nodes = classes.map(term => new NodeValueNode(NodeFactory.createURI(term.getIRI.toString)))
-    val oneOf = new E_OneOf(new ExprVar(variable), new ExprList(nodes.toList))
+    val oneOf = new E_OneOf(new ExprVar(variable), new ExprList((nodes.toList: List[Expr]).asJava))
     new ElementFilter(oneOf)
   }
 
