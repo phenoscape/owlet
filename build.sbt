@@ -3,7 +3,7 @@ organization  := "org.phenoscape"
 
 name          := "owlet"
 
-version       := "1.6.2"
+version       := "1.7"
 
 publishMavenStyle := true
 
