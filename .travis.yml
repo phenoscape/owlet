@@ -5,3 +5,4 @@ scala:
   - "2.13.1"
 jdk:
   - openjdk8
+  - openjdk11

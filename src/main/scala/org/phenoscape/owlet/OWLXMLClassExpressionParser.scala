@@ -1,34 +1,15 @@
 package org.phenoscape.owlet
 
+import org.semanticweb.owlapi.apibinding.OWLManager
+import org.semanticweb.owlapi.model._
+
 import scala.collection.JavaConverters._
 import scala.collection.Map
-import scala.xml.Elem
-import scala.xml.XML
-import org.semanticweb.owlapi.apibinding.OWLManager
-import org.semanticweb.owlapi.model.IRI
-import org.semanticweb.owlapi.model.OWLAnonymousIndividual
-import org.semanticweb.owlapi.model.OWLClass
-import org.semanticweb.owlapi.model.OWLClassExpression
-import org.semanticweb.owlapi.model.OWLIndividual
-import org.semanticweb.owlapi.model.OWLNamedIndividual
-import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom
-import org.semanticweb.owlapi.model.OWLObjectComplementOf
-import org.semanticweb.owlapi.model.OWLObjectExactCardinality
-import org.semanticweb.owlapi.model.OWLObjectHasSelf
-import org.semanticweb.owlapi.model.OWLObjectHasValue
-import org.semanticweb.owlapi.model.OWLObjectIntersectionOf
-import org.semanticweb.owlapi.model.OWLObjectInverseOf
-import org.semanticweb.owlapi.model.OWLObjectMaxCardinality
-import org.semanticweb.owlapi.model.OWLObjectMinCardinality
-import org.semanticweb.owlapi.model.OWLObjectOneOf
-import org.semanticweb.owlapi.model.OWLObjectProperty
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression
-import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom
-import org.semanticweb.owlapi.model.OWLObjectUnionOf
+import scala.xml.{Elem, XML}
 
 object OWLXMLClassExpressionParser {
 
-  val factory = OWLManager.getOWLDataFactory
+  private val factory = OWLManager.getOWLDataFactory
 
   case class ObjectRestriction(property: OWLObjectPropertyExpression, filler: Option[OWLClassExpression])
 
@@ -43,25 +24,59 @@ object OWLXMLClassExpressionParser {
 
   def parseClassExpression(element: Elem, prefixes: Map[String, String]): OWLClassExpression = {
     element match {
-      case <Class/> => parseClass(element, prefixes)
-      case <ObjectIntersectionOf>{_*}</ObjectIntersectionOf> => parseObjectIntersectionOf(element, prefixes)
-      case <ObjectUnionOf>{_*}</ObjectUnionOf> => parseObjectUnionOf(element, prefixes)
-      case <ObjectComplementOf>{_*}</ObjectComplementOf> => parseObjectComplementOf(element, prefixes)
-      case <ObjectOneOf>{_*}</ObjectOneOf> => parseObjectOneOf(element, prefixes)
-      case <ObjectSomeValuesFrom>{_*}</ObjectSomeValuesFrom> => parseObjectSomeValuesFrom(element, prefixes)
-      case <ObjectAllValuesFrom>{_*}</ObjectAllValuesFrom> => parseObjectAllValuesFrom(element, prefixes)
-      case <ObjectHasValue>{_*}</ObjectHasValue> => parseObjectHasValue(element, prefixes)
-      case <ObjectHasSelf>{_*}</ObjectHasSelf> => parseObjectHasSelf(element, prefixes)
-      case <ObjectMinCardinality>{_*}</ObjectMinCardinality> => parseObjectMinCardinality(element, prefixes)
-      case <ObjectMaxCardinality>{_*}</ObjectMaxCardinality> => parseObjectMaxCardinality(element, prefixes)
-      case <ObjectExactCardinality>{_*}</ObjectExactCardinality> => parseObjectExactCardinality(element, prefixes)
-      case <DataSomeValuesFrom>{_*}</DataSomeValuesFrom> => ???
-      case <DataAllValuesFrom>{_*}</DataAllValuesFrom> => ???
-      case <DataHasValue>{_*}</DataHasValue> => ???
-      case <DataMinCardinality>{_*}</DataMinCardinality> => ???
-      case <DataMaxCardinality>{_*}</DataMaxCardinality> => ???
-      case <DataExactCardinality>{_*}</DataExactCardinality> => ???
-      case _ => null
+      case <Class/>               => parseClass(element, prefixes)
+      case <ObjectIntersectionOf>
+        {_*}
+        </ObjectIntersectionOf>   => parseObjectIntersectionOf(element, prefixes)
+      case <ObjectUnionOf>
+        {_*}
+        </ObjectUnionOf>          => parseObjectUnionOf(element, prefixes)
+      case <ObjectComplementOf>
+        {_*}
+        </ObjectComplementOf>     => parseObjectComplementOf(element, prefixes)
+      case <ObjectOneOf>
+        {_*}
+        </ObjectOneOf>            => parseObjectOneOf(element, prefixes)
+      case <ObjectSomeValuesFrom>
+        {_*}
+        </ObjectSomeValuesFrom>   => parseObjectSomeValuesFrom(element, prefixes)
+      case <ObjectAllValuesFrom>
+        {_*}
+        </ObjectAllValuesFrom>    => parseObjectAllValuesFrom(element, prefixes)
+      case <ObjectHasValue>
+        {_*}
+        </ObjectHasValue>         => parseObjectHasValue(element, prefixes)
+      case <ObjectHasSelf>
+        {_*}
+        </ObjectHasSelf>          => parseObjectHasSelf(element, prefixes)
+      case <ObjectMinCardinality>
+        {_*}
+        </ObjectMinCardinality>   => parseObjectMinCardinality(element, prefixes)
+      case <ObjectMaxCardinality>
+        {_*}
+        </ObjectMaxCardinality>   => parseObjectMaxCardinality(element, prefixes)
+      case <ObjectExactCardinality>
+        {_*}
+        </ObjectExactCardinality> => parseObjectExactCardinality(element, prefixes)
+      case <DataSomeValuesFrom>
+        {_*}
+        </DataSomeValuesFrom>     => ???
+      case <DataAllValuesFrom>
+        {_*}
+        </DataAllValuesFrom>      => ???
+      case <DataHasValue>
+        {_*}
+        </DataHasValue>           => ???
+      case <DataMinCardinality>
+        {_*}
+        </DataMinCardinality>     => ???
+      case <DataMaxCardinality>
+        {_*}
+        </DataMaxCardinality>     => ???
+      case <DataExactCardinality>
+        {_*}
+        </DataExactCardinality>   => ???
+      case _                      => null
     }
   }
 
@@ -81,17 +96,19 @@ object OWLXMLClassExpressionParser {
 
   def parseObjectSomeValuesFrom(element: Elem, prefixes: Map[String, String]): OWLObjectSomeValuesFrom = {
     def struct = parseObjectRestriction(element, prefixes)
+
     factory.getOWLObjectSomeValuesFrom(struct.property, struct.filler.get)
   }
 
   def parseObjectAllValuesFrom(element: Elem, prefixes: Map[String, String]): OWLObjectAllValuesFrom = {
     def struct = parseObjectRestriction(element, prefixes)
+
     factory.getOWLObjectAllValuesFrom(struct.property, struct.filler.get)
   }
 
   def parseObjectRestriction(element: Elem, prefixes: Map[String, String]): ObjectRestriction = {
     val childElements = children(element)
-    val property = parsePropertyExpression(childElements(0), prefixes)
+    val property = parsePropertyExpression(childElements.head, prefixes)
     val filler = if (childElements.size > 1)
       Option(parseClassExpression(childElements(1), prefixes))
     else
@@ -110,7 +127,7 @@ object OWLXMLClassExpressionParser {
 
   def parseObjectHasValue(element: Elem, prefixes: Map[String, String]): OWLObjectHasValue = {
     val childElements = children(element)
-    val property = parsePropertyExpression(childElements(0), prefixes)
+    val property = parsePropertyExpression(childElements.head, prefixes)
     val filler = parseIndividual(childElements(1), prefixes)
     factory.getOWLObjectHasValue(property, filler)
   }
@@ -125,7 +142,7 @@ object OWLXMLClassExpressionParser {
     val cardinality = (element \ "@cardinality").head.text.toInt
     restriction match {
       case ObjectRestriction(property, Some(filler)) => factory.getOWLObjectMinCardinality(cardinality, property, filler)
-      case ObjectRestriction(property, None) => factory.getOWLObjectMinCardinality(cardinality, property)
+      case ObjectRestriction(property, None)         => factory.getOWLObjectMinCardinality(cardinality, property)
     }
   }
 
@@ -134,7 +151,7 @@ object OWLXMLClassExpressionParser {
     val cardinality = (element \ "@cardinality").head.text.toInt
     restriction match {
       case ObjectRestriction(property, Some(filler)) => factory.getOWLObjectMaxCardinality(cardinality, property, filler)
-      case ObjectRestriction(property, None) => factory.getOWLObjectMaxCardinality(cardinality, property)
+      case ObjectRestriction(property, None)         => factory.getOWLObjectMaxCardinality(cardinality, property)
     }
   }
 
@@ -143,13 +160,13 @@ object OWLXMLClassExpressionParser {
     val cardinality = (element \ "@cardinality").head.text.toInt
     restriction match {
       case ObjectRestriction(property, Some(filler)) => factory.getOWLObjectExactCardinality(cardinality, property, filler)
-      case ObjectRestriction(property, None) => factory.getOWLObjectExactCardinality(cardinality, property)
+      case ObjectRestriction(property, None)         => factory.getOWLObjectExactCardinality(cardinality, property)
     }
   }
 
   def parseIndividual(element: Elem, prefixes: Map[String, String]): OWLIndividual = {
     element match {
-      case <NamedIndividual/> => parseNamedIndividual(element, prefixes)
+      case <NamedIndividual/>     => parseNamedIndividual(element, prefixes)
       case <AnonymousIndividual/> => parseAnonymousIndividual(element, prefixes)
     }
   }
@@ -166,7 +183,9 @@ object OWLXMLClassExpressionParser {
   def parsePropertyExpression(element: Elem, prefixes: Map[String, String]): OWLObjectPropertyExpression = {
     element match {
       case <ObjectProperty/> => parseObjectProperty(element, prefixes)
-      case <ObjectInverseOf>{_*}</ObjectInverseOf> => parseInverseProperty(element, prefixes)
+      case <ObjectInverseOf>
+        {_*}
+        </ObjectInverseOf>   => parseInverseProperty(element, prefixes)
     }
   }
 
@@ -190,6 +209,6 @@ object OWLXMLClassExpressionParser {
     prefixes(segments(0)) + localName
   }
 
-  def children(element: Elem): Seq[Elem] = (element.child collect { case e: Elem => e }).toSeq
+  def children(element: Elem): Seq[Elem] = element.child collect { case e: Elem => e }
 
 }
