@@ -25,7 +25,9 @@ object SPARQLComposer {
   def select(resultVars: Var*): Query = {
     val query = QueryFactory.make()
     query.setQuerySelectType()
-    resultVars foreach { query.addResultVar(_) }
+    resultVars foreach {
+      query.addResultVar(_)
+    }
     query
   }
 
@@ -142,7 +144,9 @@ object SPARQLComposer {
 
     def where(elements: Element*): Query = {
       val body = new ElementGroup()
-      elements foreach { body.addElement(_) }
+      elements foreach {
+        body.addElement(_)
+      }
       self.setQueryPattern(body)
       self
     }

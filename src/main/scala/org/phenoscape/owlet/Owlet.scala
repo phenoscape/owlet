@@ -7,8 +7,8 @@ import org.apache.jena.graph.impl.GraphBase
 import org.apache.jena.query._
 import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.sparql.core.TriplePath
-import org.apache.jena.sparql.expr.nodevalue.NodeValueNode
 import org.apache.jena.sparql.expr._
+import org.apache.jena.sparql.expr.nodevalue.NodeValueNode
 import org.apache.jena.sparql.syntax._
 import org.apache.jena.util.iterator.{ExtendedIterator, WrappedIterator}
 import org.apache.jena.vocabulary.{OWL2, RDF, RDFS}
@@ -112,14 +112,13 @@ class Owlet(reasoner: OWLReasoner) {
 
   def addQueryAsClass(expression: OWLClassExpression): OWLClass = expression match {
     case named: OWLClass => named
-    case anonymous       => {
+    case anonymous       =>
       val ontology = reasoner.getRootOntology
       val manager = ontology.getOWLOntologyManager
       val namedQuery = factory.getOWLClass(IRI.create(s"http://example.org/${UUID.randomUUID.toString}"))
       manager.addAxiom(ontology, factory.getOWLEquivalentClassesAxiom(namedQuery, expression))
       reasoner.flush()
       namedQuery
-    }
   }
 
   def performSPARQLQuery(query: Query): ResultSet = {
@@ -146,16 +145,16 @@ class Owlet(reasoner: OWLReasoner) {
 
 object Owlet {
 
-  val SubClassOf = RDFS.Nodes.subClassOf
-  val EquivalentClass = OWL2.equivalentClass.asNode
-  val Type = RDF.Nodes.`type`
-  val OWLET_NS = "http://purl.org/phenoscape/owlet/syntax#"
-  val MANCHESTER = OWLET_NS + "omn"
-  val OWLXML = OWLET_NS + "owx"
-  val FUNCTIONAL = OWLET_NS + "ofn"
-  val SYNTAXES = Set(MANCHESTER, OWLXML, FUNCTIONAL)
+  val SubClassOf: Node = RDFS.Nodes.subClassOf
+  val EquivalentClass: Node = OWL2.equivalentClass.asNode
+  val Type: Node = RDF.Nodes.`type`
+  val OWLET_NS: String = "http://purl.org/phenoscape/owlet/syntax#"
+  val MANCHESTER: String = s"${OWLET_NS}omn"
+  val OWLXML: String = s"${OWLET_NS}owx"
+  val FUNCTIONAL: String = s"${OWLET_NS}ofn"
+  val SYNTAXES: Set[String] = Set(MANCHESTER, OWLXML, FUNCTIONAL)
 
-  def runQueryAndMakeFilter(queryFunction: (OWLClassExpression => Set[_ <: OWLEntity]), classExpression: Node_Literal, prefixes: Map[String, String], variable: Node_Variable): Option[ElementFilter] = {
+  def runQueryAndMakeFilter(queryFunction: OWLClassExpression => Set[_ <: OWLEntity], classExpression: Node_Literal, prefixes: Map[String, String], variable: Node_Variable): Option[ElementFilter] = {
     val parsedExpression = parseExpression(classExpression, prefixes)
     parsedExpression match {
       case Some(expression) => Option(makeFilter(variable, queryFunction(expression)))

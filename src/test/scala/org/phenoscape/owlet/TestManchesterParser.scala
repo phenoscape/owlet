@@ -6,6 +6,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model.IRI
 import org.semanticweb.owlapi.model.OWLClass
 import org.semanticweb.owlapi.model.OWLClassExpression
+import scalaz.Validation
 
 class TestManchesterParser {
 
@@ -41,12 +42,13 @@ class TestManchesterParser {
     Assert.assertEquals(factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectSomeValuesFrom(part_of, head)), parsed6)
 
     val parsed6a = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> that <http://example.org/part_of> some <http://example.org/head>").toOption.get
+
     Assert.assertEquals(factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectSomeValuesFrom(part_of, head)), parsed6a)
 
-    val parsed6b = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> that not <http://example.org/part_of> some <http://example.org/head>").toOption.get
+    val parsed6b = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> that not (<http://example.org/part_of> some <http://example.org/head>)").toOption.get
     Assert.assertEquals(factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectComplementOf(factory.getOWLObjectSomeValuesFrom(part_of, head))), parsed6b)
 
-    val parsed6c = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> that not <http://example.org/part_of> some <http://example.org/head> and <http://example.org/part_of> some <http://example.org/eye>").toOption.get
+    val parsed6c = ManchesterSyntaxClassExpressionParser.parse("<http://example.org/muscle> that not (<http://example.org/part_of> some <http://example.org/head>) and <http://example.org/part_of> some <http://example.org/eye>").toOption.get
     Assert.assertEquals(factory.getOWLObjectIntersectionOf(muscle, factory.getOWLObjectComplementOf(factory.getOWLObjectSomeValuesFrom(part_of, head)), factory.getOWLObjectSomeValuesFrom(part_of, eye)), parsed6c)
 
     val parsed7 = ManchesterSyntaxClassExpressionParser.parse("not <http://example.org/muscle> and <http://example.org/part_of> some <http://example.org/head>").toOption.get
@@ -70,6 +72,9 @@ class TestManchesterParser {
       factory.getOWLObjectIntersectionOf(cell, factory.getOWLObjectMaxCardinality(1, has_part, nucleus)),
       eye)
     Assert.assertEquals(built11, parsed11)
+
+    val parsed12 = ManchesterSyntaxClassExpressionParser.parse("", Map("ex" -> "http://example.org/"))
+    Assert.assertTrue(parsed12.isFailure)
   }
 
   @Test

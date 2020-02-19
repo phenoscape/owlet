@@ -1,30 +1,11 @@
 package org.phenoscape.owlet
 
+import org.semanticweb.owlapi.apibinding.OWLManager
+import org.semanticweb.owlapi.model._
+
 import scala.collection.JavaConverters._
 import scala.collection.Map
-import scala.xml.Elem
-import scala.xml.XML
-import org.semanticweb.owlapi.apibinding.OWLManager
-import org.semanticweb.owlapi.model.IRI
-import org.semanticweb.owlapi.model.OWLAnonymousIndividual
-import org.semanticweb.owlapi.model.OWLClass
-import org.semanticweb.owlapi.model.OWLClassExpression
-import org.semanticweb.owlapi.model.OWLIndividual
-import org.semanticweb.owlapi.model.OWLNamedIndividual
-import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom
-import org.semanticweb.owlapi.model.OWLObjectComplementOf
-import org.semanticweb.owlapi.model.OWLObjectExactCardinality
-import org.semanticweb.owlapi.model.OWLObjectHasSelf
-import org.semanticweb.owlapi.model.OWLObjectHasValue
-import org.semanticweb.owlapi.model.OWLObjectIntersectionOf
-import org.semanticweb.owlapi.model.OWLObjectInverseOf
-import org.semanticweb.owlapi.model.OWLObjectMaxCardinality
-import org.semanticweb.owlapi.model.OWLObjectMinCardinality
-import org.semanticweb.owlapi.model.OWLObjectOneOf
-import org.semanticweb.owlapi.model.OWLObjectProperty
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression
-import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom
-import org.semanticweb.owlapi.model.OWLObjectUnionOf
+import scala.xml.{Elem, XML}
 
 object OWLXMLClassExpressionParser {
 
@@ -91,7 +72,7 @@ object OWLXMLClassExpressionParser {
 
   def parseObjectRestriction(element: Elem, prefixes: Map[String, String]): ObjectRestriction = {
     val childElements = children(element)
-    val property = parsePropertyExpression(childElements(0), prefixes)
+    val property = parsePropertyExpression(childElements.head, prefixes)
     val filler = if (childElements.size > 1)
       Option(parseClassExpression(childElements(1), prefixes))
     else
@@ -110,7 +91,7 @@ object OWLXMLClassExpressionParser {
 
   def parseObjectHasValue(element: Elem, prefixes: Map[String, String]): OWLObjectHasValue = {
     val childElements = children(element)
-    val property = parsePropertyExpression(childElements(0), prefixes)
+    val property = parsePropertyExpression(childElements.head, prefixes)
     val filler = parseIndividual(childElements(1), prefixes)
     factory.getOWLObjectHasValue(property, filler)
   }
@@ -190,6 +171,6 @@ object OWLXMLClassExpressionParser {
     prefixes(segments(0)) + localName
   }
 
-  def children(element: Elem): Seq[Elem] = (element.child collect { case e: Elem => e }).toSeq
+  def children(element: Elem): Seq[Elem] = (element.child collect { case e: Elem => e })
 
 }
