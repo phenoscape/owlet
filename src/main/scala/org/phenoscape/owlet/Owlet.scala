@@ -6,7 +6,8 @@ import org.apache.jena.graph._
 import org.apache.jena.graph.impl.GraphBase
 import org.apache.jena.query._
 import org.apache.jena.rdf.model.ModelFactory
-import org.apache.jena.sparql.core.TriplePath
+import org.apache.jena.sparql.core.{TriplePath, Var}
+import org.apache.jena.sparql.engine.binding.BindingFactory
 import org.apache.jena.sparql.expr._
 import org.apache.jena.sparql.expr.nodevalue.NodeValueNode
 import org.apache.jena.sparql.syntax._
@@ -27,20 +28,21 @@ import scala.collection.immutable.Set
  */
 class Owlet(reasoner: OWLReasoner) {
 
-  private lazy val factory = OWLManager.getOWLDataFactory
+  private val factory = OWLManager.getOWLDataFactory
 
-  def expandQueryString(query: String): String = {
+  def expandQueryString(query: String, asValues: Boolean = false): String = {
     val parsedQuery = QueryFactory.create(query)
-    expandQuery(parsedQuery).toString
+    expandQuery(parsedQuery, asValues).toString
   }
 
-  def expandQuery(query: Query): Query = {
-    val prefixMap = query.getPrefixMapping.getNsPrefixMap
-    ElementWalker.walk(query.getQueryPattern, new SPARQLVisitor(prefixMap.asScala))
-    query
+  def expandQuery(query: Query, asValues: Boolean = false): Query = {
+    val newQuery = query.cloneQuery()
+    val prefixMap = newQuery.getPrefixMapping.getNsPrefixMap
+    ElementWalker.walk(newQuery.getQueryPattern, new SPARQLVisitor(prefixMap.asScala, asValues))
+    newQuery
   }
 
-  private class SPARQLVisitor(prefixes: Map[String, String]) extends RecursiveElementVisitor(new ElementVisitorBase()) {
+  private class SPARQLVisitor(prefixes: Map[String, String], asValues: Boolean) extends RecursiveElementVisitor(new ElementVisitorBase()) {
 
     override def endElement(filter: ElementFilter): Unit = filter.getExpr match {
       case existsLike: ExprFunctionOp => ElementWalker.walk(existsLike.getElement, this)
@@ -54,7 +56,7 @@ class Owlet(reasoner: OWLReasoner) {
           val pattern = patterns.next()
           for {
             result <- matchTriple(pattern, prefixes)
-            filter <- result.toFilter
+            filter <- if (asValues) result.toValues else result.toFilter
           } {
             patterns.remove()
             group.addElement(filter)
@@ -62,6 +64,7 @@ class Owlet(reasoner: OWLReasoner) {
         }
       }
     }
+
   }
 
   private def querySubClasses(expression: OWLClassExpression): Set[OWLClass] = {
@@ -154,13 +157,10 @@ object Owlet {
   val FUNCTIONAL: String = s"${OWLET_NS}ofn"
   val SYNTAXES: Set[String] = Set(MANCHESTER, OWLXML, FUNCTIONAL)
 
-  def runQueryAndMakeFilter(queryFunction: OWLClassExpression => Set[_ <: OWLEntity], classExpression: Node_Literal, prefixes: Map[String, String], variable: Node_Variable): Option[ElementFilter] = {
-    val parsedExpression = parseExpression(classExpression, prefixes)
-    parsedExpression match {
-      case Some(expression) => Option(makeFilter(variable, queryFunction(expression)))
-      case None             => None
+  def runQueryAndMakeFilter(queryFunction: OWLClassExpression => Set[_ <: OWLEntity], classExpression: Node_Literal, prefixes: Map[String, String], variable: Node_Variable): Option[ElementFilter] =
+    parseExpression(classExpression, prefixes).map { expression =>
+      makeFilter(variable, queryFunction(expression))
     }
-  }
 
   private def parseExpression(literal: Node_Literal, prefixes: Map[String, String]): Option[OWLClassExpression] = {
     val expression = literal.getLiteralLexicalForm
@@ -177,6 +177,17 @@ object Owlet {
     val nodes = classes.map(term => new NodeValueNode(NodeFactory.createURI(term.getIRI.toString)))
     val oneOf = new E_OneOf(new ExprVar(variable), new ExprList((nodes.toList: List[Expr]).asJava))
     new ElementFilter(oneOf)
+  }
+
+  def makeValuesBlock(variable: Node_Variable, classes: Iterable[OWLEntity]): ElementData = {
+    val nodes = classes.map(term => NodeFactory.createURI(term.getIRI.toString))
+    val data = new ElementData()
+    val bindingVar = Var.alloc(variable)
+    data.add(bindingVar)
+    nodes.foreach { node =>
+      data.add(BindingFactory.binding(bindingVar, node))
+    }
+    data
   }
 
 }

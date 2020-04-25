@@ -43,7 +43,7 @@ public class TestSPARQLQueryJava {
 
 		final Owlet owlet = new Owlet(reasoner);
 		final Query query = QueryFactory.create(queryText);
-		final Query expandedQuery = owlet.expandQuery(query);
+		final Query expandedQuery = owlet.expandQuery(query, true);
 		@SuppressWarnings("unused")
 		final ResultSet results = QueryExecutionFactory.create(expandedQuery, rdfModel).execSelect();
 	}

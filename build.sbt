@@ -3,7 +3,7 @@ organization  := "org.phenoscape"
 
 name          := "owlet"
 
-version       := "1.7"
+version       := "1.8-SNAPSHOT"
 
 publishMavenStyle := true
 
@@ -21,9 +21,9 @@ licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
 
 homepage := Some(url("https://github.com/phenoscape/owlet"))
 
-scalaVersion  := "2.13.1"
+scalaVersion  := "2.12.11"
 
-crossScalaVersions := Seq("2.12.10", "2.13.1")
+crossScalaVersions := Seq("2.12.11", "2.13.2")
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
@@ -36,11 +36,10 @@ libraryDependencies ++= {
       "org.apache.jena"            %  "apache-jena-libs"         % "3.14.0",
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.2",
       "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.30",
-      "org.scala-lang.modules"     %% "scala-parser-combinators" % "1.1.2",
       "org.scala-lang.modules"     %% "scala-xml"                % "1.3.0",
       "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3" % Test,
       "junit"                      %  "junit"                    % "4.13"  % Test,
-      "com.novocode"               % "junit-interface"           % "0.11"  % Test
+      "com.novocode"               %  "junit-interface"          % "0.11"  % Test
     )
 }
 

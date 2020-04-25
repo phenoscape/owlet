@@ -21,7 +21,7 @@ object ManchesterSyntaxClassExpressionParser {
   def parse(expression: String, prefixes: java.util.Map[String, String]): Validation[String, OWLClassExpression] =
     parse(expression, prefixes.asScala)
 
-  def parseIRI(input: String, prefixes: Map[String, String] = Map[String, String]()): Validation[String, IRI] = {
+  def parseIRI(input: String, prefixes: Map[String, String] = Map.empty): Validation[String, IRI] = {
     StandaloneEntityChecker.nameToIRI(input, prefixes) match {
       case Some(iri) => Validation.success(iri)
       case None      => Validation.failure("Invalid IRI")
