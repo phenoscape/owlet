@@ -61,7 +61,36 @@ class TestSPARQLQuery {
     val query = QueryFactory.create(queryText)
     val unexpandedResults = QueryExecutionFactory.create(query, vsaoRDF).execSelect()
     Assert.assertFalse("Shouldn't get any results before expansion", unexpandedResults.hasNext)
-    val expandedQuery = owlet.expandQuery(query)
+    val expandedQuery = owlet.expandQuery(query, false)
+    val results = QueryExecutionFactory.create(expandedQuery, vsaoRDF).execSelect()
+    Assert.assertEquals("Should get seven results", 7, results.asScala.length)
+  }
+
+  @Test
+  def testSPARQLQueryUsingValues(): Unit = {
+    val rdfStream = this.getClass.getClassLoader.getResourceAsStream("vsao.owl")
+    val vsaoRDF = ModelFactory.createDefaultModel()
+    vsaoRDF.read(rdfStream, null)
+    rdfStream.close()
+    val queryText = """
+					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+					PREFIX ow: <http://purl.org/phenoscape/owlet/syntax#>
+					PREFIX axial_skeleton: <http://purl.obolibrary.org/obo/VSAO_0000056>
+					PREFIX definition: <http://purl.obolibrary.org/obo/IAO_0000115>
+					PREFIX part_of: <http://purl.obolibrary.org/obo/BFO_0000050>
+					SELECT DISTINCT ?structure ?label ?definition
+					WHERE
+					{
+					?structure rdfs:label ?label .
+					?structure definition: ?definition .
+					?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^ow:omn .
+					}
+					"""
+    val owlet = new Owlet(TestSPARQLQuery.reasoner)
+    val query = QueryFactory.create(queryText)
+    val unexpandedResults = QueryExecutionFactory.create(query, vsaoRDF).execSelect()
+    Assert.assertFalse("Shouldn't get any results before expansion", unexpandedResults.hasNext)
+    val expandedQuery = owlet.expandQuery(query, true)
     val results = QueryExecutionFactory.create(expandedQuery, vsaoRDF).execSelect()
     Assert.assertEquals("Should get seven results", 7, results.asScala.length)
   }
