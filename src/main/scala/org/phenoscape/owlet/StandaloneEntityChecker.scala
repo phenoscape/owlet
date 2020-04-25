@@ -30,14 +30,10 @@ object StandaloneEntityChecker {
   private val CURIE = "^([^:]*):(.*)$".r
   private val FullIRI = "^<(.+)>$".r
 
-  def nameToIRI(name: String, prefixes: PartialFunction[String, String]): Option[IRI] = {
-    println(name)
-    println(prefixes)
-    name match {
-      case FullIRI(iri)         => Option(IRI.create(iri))
-      case CURIE(prefix, local) => prefixes.lift(prefix).map(uri => IRI.create(s"$uri$local"))
-      case _                    => None
-    }
+  def nameToIRI(name: String, prefixes: PartialFunction[String, String]): Option[IRI] = name match {
+    case FullIRI(iri)         => Option(IRI.create(iri))
+    case CURIE(prefix, local) => prefixes.lift(prefix).map(uri => IRI.create(s"$uri$local"))
+    case _                    => None
   }
 
 }
