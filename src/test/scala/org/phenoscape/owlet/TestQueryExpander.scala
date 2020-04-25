@@ -186,4 +186,34 @@ class TestQueryExpander {
     Assert.assertTrue(expandedQuery.contains("FILTER ( ?structure IN"))
   }
 
+  @Test
+  def testSubQuery(): Unit = {
+    val manchesterQuery = """
+					PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+					PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+					PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+					PREFIX owl: <http://www.w3.org/2002/07/owl#>
+					PREFIX ow: <http://purl.org/phenoscape/owlet/syntax#>
+					PREFIX vsao: <http://purl.obolibrary.org/obo/VSAO_>
+					PREFIX axial_skeleton: <http://purl.obolibrary.org/obo/VSAO_0000056>
+					PREFIX part_of: <http://purl.obolibrary.org/obo/BFO_0000050>
+					PREFIX has_part: <http://purl.obolibrary.org/obo/BFO_0000051>
+					SELECT *
+					WHERE
+					{
+					?organism has_part: ?part .
+    				{
+              SELECT ?part WHERE {
+						  ?part rdf:type ?structure .
+						  ?structure rdfs:subClassOf "part_of: some axial_skeleton:"^^ow:omn .
+              }
+    				}
+					}
+					"""
+    val expander = new Owlet(TestQueryExpander.reasoner)
+    val expandedQuery = expander.expandQueryString(manchesterQuery, true)
+    println(expandedQuery)
+    Assert.assertTrue(expandedQuery.contains("VALUES ?structure {"))
+  }
+
 }
