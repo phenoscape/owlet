@@ -45,9 +45,11 @@ class Owlet(reasoner: OWLReasoner) {
   private class SPARQLVisitor(prefixes: Map[String, String], asValues: Boolean) extends RecursiveElementVisitor(new ElementVisitorBase()) {
 
     override def endElement(filter: ElementFilter): Unit = filter.getExpr match {
-      case existsLike: ExprFunctionOp => ElementWalker.walk(existsLike.getElement, this)
+      case existsLike: ExprFunctionOp => existsLike.getElement.visit(this)
       case _                          => ()
     }
+
+    override def endElement(subquery: ElementSubQuery): Unit = subquery.getQuery.getQueryPattern.visit(this)
 
     override def endElement(group: ElementGroup): Unit = {
       for (pathBlock <- group.getElements.asScala.collect({ case pb: ElementPathBlock => pb })) {
