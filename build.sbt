@@ -38,7 +38,7 @@ libraryDependencies ++= {
       "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.30",
       "org.scala-lang.modules"     %% "scala-xml"                % "1.3.0",
       "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3" % Test,
-      "junit"                      %  "junit"                    % "4.13"  % Test,
+      "junit"                      %  "junit"                    % "4.13.2"  % Test,
       "com.novocode"               %  "junit-interface"          % "0.11"  % Test
     )
 }
