@@ -23,7 +23,7 @@ owlet is not yet available from an online Maven repository. To use it in your pr
 ```
 
 ## How does it work
-The OWL class expression to be expanded is a string literal at an appropriate location in a SPARQL query. The query expander recognizes the literal containing the class expression by its datatype, which must be `http://purl.org/owlet/#omn`. [Datatypes of literals in SPARQL] are assigned using the `^^TypeURI` suffix notation (where `TypeURI` is the URI of the datatype; URI prefixes are allowed).
+The OWL class expression to be expanded is a string literal at an appropriate location in a SPARQL query. The query expander recognizes the literal containing the class expression by its datatype, which must be `http://purl.org/phenoscape/owlet/syntax#omn`. [Datatypes of literals in SPARQL] are assigned using the `^^TypeURI` suffix notation (where `TypeURI` is the URI of the datatype; URI prefixes are allowed).
 
 The literal containing the class expression must be in one of the following 3 triple patterns (with `rdf`, `rdfs`, `owl` declared [as in prefix.cc], and `owlet` as `<http://purl.org/phenoscape/owlet/syntax#>`):
 
