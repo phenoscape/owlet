@@ -1,8 +1,6 @@
 owlet
 ==========
 
-[![Build Status](https://secure.travis-ci.org/phenoscape/owlet.png)](http://travis-ci.org/phenoscape/owlet)
-
 **owlet** is a query expansion preprocessor for SPARQL. It parses embedded OWL class expressions (in [Manchester Syntax]) and uses an OWL reasoner to replace them with FILTER statements containing the URIs of subclasses of the given class expression (or superclasses, equivalent classes, or instances).
 
 **owlet** is written in Scala but can be used in any Java application.
