@@ -31,7 +31,7 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 
 libraryDependencies ++= {
     Seq(
-      "org.scalaz"                 %% "scalaz-core"              % "7.2.33",
+      "org.scalaz"                 %% "scalaz-core"              % "7.3.5",
       "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.20",
       "org.apache.jena"            %  "apache-jena-libs"         % "3.17.0",
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.4",
