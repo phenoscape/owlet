@@ -37,9 +37,9 @@ libraryDependencies ++= {
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.4",
       "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.32",
       "org.scala-lang.modules"     %% "scala-xml"                % "2.0.1",
-      "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3" % Test,
-      "junit"                      %  "junit"                    % "4.13.2"  % Test,
-      "com.novocode"               %  "junit-interface"          % "0.11"  % Test
+      "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3"  % Test,
+      "junit"                      %  "junit"                    % "4.13.2" % Test,
+      "com.github.sbt"             %  "junit-interface"          % "0.13.2" % Test
     )
 }
 
