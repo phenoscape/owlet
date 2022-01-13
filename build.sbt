@@ -23,7 +23,7 @@ homepage := Some(url("https://github.com/phenoscape/owlet"))
 
 scalaVersion  := "2.12.14"
 
-crossScalaVersions := Seq("2.12.14", "2.13.6")
+crossScalaVersions := Seq("2.12.14", "2.13.8")
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
