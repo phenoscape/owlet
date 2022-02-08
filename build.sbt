@@ -35,7 +35,7 @@ libraryDependencies ++= {
       "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.20",
       "org.apache.jena"            %  "apache-jena-libs"         % "4.1.0",
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.4",
-      "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.32",
+      "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.36",
       "org.scala-lang.modules"     %% "scala-xml"                % "2.0.1",
       "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3"  % Test,
       "junit"                      %  "junit"                    % "4.13.2" % Test,
