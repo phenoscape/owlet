@@ -21,9 +21,9 @@ licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
 
 homepage := Some(url("https://github.com/phenoscape/owlet"))
 
-scalaVersion  := "2.12.14"
+scalaVersion  := "2.12.18"
 
-crossScalaVersions := Seq("2.12.14", "2.13.6")
+crossScalaVersions := Seq("2.12.18", "2.13.6")
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
