@@ -39,7 +39,7 @@ libraryDependencies ++= {
       "org.scala-lang.modules"     %% "scala-xml"                % "2.0.1",
       "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3"  % Test,
       "junit"                      %  "junit"                    % "4.13.2" % Test,
-      "com.github.sbt"             %  "junit-interface"          % "0.13.2" % Test
+      "com.github.sbt"             %  "junit-interface"          % "0.13.3" % Test
     )
 }
 
