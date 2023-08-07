@@ -21,9 +21,9 @@ licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
 
 homepage := Some(url("https://github.com/phenoscape/owlet"))
 
-scalaVersion  := "2.12.14"
+scalaVersion  := "2.12.18"
 
-crossScalaVersions := Seq("2.12.14", "2.13.6")
+crossScalaVersions := Seq("2.12.18", "2.13.11")
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
@@ -31,15 +31,15 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 
 libraryDependencies ++= {
     Seq(
-      "org.scalaz"                 %% "scalaz-core"              % "7.3.5",
-      "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.20",
+      "org.scalaz"                 %% "scalaz-core"              % "7.3.7",
+      "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.26",
       "org.apache.jena"            %  "apache-jena-libs"         % "4.1.0",
-      "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.4",
-      "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.32",
+      "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.5",
       "org.scala-lang.modules"     %% "scala-xml"                % "2.2.0",
+      "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.32" % Test,
       "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3"  % Test,
       "junit"                      %  "junit"                    % "4.13.2" % Test,
-      "com.github.sbt"             %  "junit-interface"          % "0.13.2" % Test
+      "com.github.sbt"             %  "junit-interface"          % "0.13.3" % Test
     )
 }
 
