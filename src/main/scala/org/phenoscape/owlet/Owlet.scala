@@ -1,7 +1,5 @@
 package org.phenoscape.owlet
 
-import java.util.UUID
-
 import org.apache.jena.graph._
 import org.apache.jena.graph.impl.GraphBase
 import org.apache.jena.query._
@@ -17,9 +15,9 @@ import org.semanticweb.owlapi.apibinding.OWLManager
 import org.semanticweb.owlapi.model._
 import org.semanticweb.owlapi.reasoner.OWLReasoner
 
+import java.util.UUID
 import scala.collection.JavaConverters._
 import scala.collection.Map
-import scala.collection.immutable.Set
 
 /**
  * Processes SPARQL queries containing triple patterns with embedded OWL class expressions.
@@ -42,16 +40,16 @@ class Owlet(reasoner: OWLReasoner) {
     newQuery
   }
 
-  private class SPARQLVisitor(prefixes: Map[String, String], asValues: Boolean) extends RecursiveElementVisitor(new ElementVisitorBase()) {
+  private class SPARQLVisitor(prefixes: Map[String, String], asValues: Boolean) extends ElementVisitorBase {
 
-    override def endElement(filter: ElementFilter): Unit = filter.getExpr match {
+    override def visit(filter: ElementFilter): Unit = filter.getExpr match {
       case existsLike: ExprFunctionOp => existsLike.getElement.visit(this)
       case _                          => ()
     }
 
-    override def endElement(subquery: ElementSubQuery): Unit = subquery.getQuery.getQueryPattern.visit(this)
+    override def visit(subquery: ElementSubQuery): Unit = subquery.getQuery.getQueryPattern.visit(this)
 
-    override def endElement(group: ElementGroup): Unit = {
+    override def visit(group: ElementGroup): Unit = {
       for (pathBlock <- group.getElements.asScala.collect({ case pb: ElementPathBlock => pb })) {
         val patterns = pathBlock.getPattern.iterator
         while (patterns.hasNext) {
