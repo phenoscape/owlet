@@ -23,7 +23,7 @@ homepage := Some(url("https://github.com/phenoscape/owlet"))
 
 scalaVersion  := "2.12.14"
 
-crossScalaVersions := Seq("2.12.14", "2.13.6")
+crossScalaVersions := Seq("2.12.14", "2.13.11")
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
@@ -32,7 +32,7 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 libraryDependencies ++= {
     Seq(
       "org.scalaz"                 %% "scalaz-core"              % "7.3.7",
-      "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.20",
+      "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.26",
       "org.apache.jena"            %  "apache-jena-libs"         % "4.1.0",
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.4",
       "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.32",
