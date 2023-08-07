@@ -33,7 +33,7 @@ libraryDependencies ++= {
     Seq(
       "org.scalaz"                 %% "scalaz-core"              % "7.3.7",
       "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.26",
-      "org.apache.jena"            %  "apache-jena-libs"         % "4.1.0",
+      "org.apache.jena"            %  "apache-jena-libs"         % "4.9.0",
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.5",
       "org.scala-lang.modules"     %% "scala-xml"                % "2.0.1",
       "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.32" % Test,
