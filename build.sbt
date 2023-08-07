@@ -36,7 +36,7 @@ libraryDependencies ++= {
       "org.apache.jena"            %  "apache-jena-libs"         % "4.9.0",
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.5",
       "org.scala-lang.modules"     %% "scala-xml"                % "2.2.0",
-      "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.36" % Test,
+      "org.slf4j"                  %  "slf4j-log4j12"            % "2.0.7" % Test,
       "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3"  % Test,
       "junit"                      %  "junit"                    % "4.13.2" % Test,
       "com.github.sbt"             %  "junit-interface"          % "0.13.3" % Test
