@@ -6,7 +6,7 @@ import org.semanticweb.owlapi.model._
 import org.semanticweb.owlapi.model.parameters.Imports
 import org.semanticweb.owlapi.vocab.{OWL2Datatype, OWLRDFVocabulary, XSDVocabulary}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class StandaloneEntityChecker(prefixes: PartialFunction[String, String], ontologyOpt: Option[OWLOntology] = None) extends OWLEntityChecker {
 
