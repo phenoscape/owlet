@@ -3,7 +3,7 @@ organization  := "org.phenoscape"
 
 name          := "owlet"
 
-version       := "1.9"
+version       := "2.0-SNAPSHOT"
 
 publishMavenStyle := true
 
@@ -15,38 +15,39 @@ publishTo := {
         Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
-publishArtifact in Test := false
+Test / publishArtifact := false
 
 licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
 
 homepage := Some(url("https://github.com/phenoscape/owlet"))
 
-scalaVersion  := "2.12.18"
+scalaVersion  := "2.13.11"
 
-crossScalaVersions := Seq("2.12.18", "2.13.11")
+//crossScalaVersions := Seq("2.13.11", "3")
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
-scalacOptions in Test ++= Seq("-Yrangepos")
+Test / scalacOptions ++= Seq("-Yrangepos")
+
+testFrameworks += new TestFramework("utest.runner.Framework")
+
+Test / parallelExecution := false
 
 lazy val jenaVersion = "4.9.0"
 
 libraryDependencies ++= {
     Seq(
-      "org.scalaz"                 %% "scalaz-core"              % "7.3.7",
       "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.26",
       "org.apache.jena"            %  "jena-core"                % jenaVersion,
       "org.apache.jena"            %  "jena-arq"                 % jenaVersion,
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.5",
-      "org.scala-lang.modules"     %% "scala-xml"                % "2.2.0",
-      "org.slf4j"                  %  "slf4j-log4j12"            % "1.7.36" % Test,
+      "org.slf4j"                  %  "slf4j-log4j12"            % "2.0.9" % Test,
       "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3"  % Test,
-      "junit"                      %  "junit"                    % "4.13.2" % Test,
-      "com.github.sbt"             %  "junit-interface"          % "0.13.3" % Test
+      "com.lihaoyi"                %% "utest"                    % "0.8.1"  % Test
     )
 }
 
-pomExtra := (
+pomExtra :=
     <scm>
         <url>git@github.com:phenoscape/owlet.git</url>
         <connection>scm:git:git@github.com:phenoscape/owlet.git</connection>
@@ -58,4 +59,3 @@ pomExtra := (
             <email>jim@balhoff.org</email>
         </developer>
     </developers>
-)
