@@ -15,6 +15,8 @@ publishTo := {
         Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
+versionScheme := Some("semver-spec")
+
 Test / publishArtifact := false
 
 licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
