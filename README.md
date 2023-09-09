@@ -1,37 +1,35 @@
 owlet
 ==========
 
-**owlet** is a query expansion preprocessor for SPARQL. It parses embedded OWL class expressions (in [Manchester Syntax]) and uses an OWL reasoner to replace them with FILTER statements containing the URIs of subclasses of the given class expression (or superclasses, equivalent classes, or instances).
+**owlet** is a query expansion preprocessor for SPARQL. It parses embedded OWL class expressions (in [Manchester Syntax]) and uses an OWL reasoner to replace them with a VALUES block containing the URIs of subclasses of the given class expression (or superclasses, equivalent classes, or instances).
 
 **owlet** is written in Scala but can be used in any Java application.
 
 ## Installation
-owlet is not yet available from an online Maven repository. To use it in your project you will need to:
-
-1. Check out the code, e.g. run `git clone https://github.com/phenoscape/owlet.git` on the command line.
-2. Run `mvn install` to build the jar and add to your local Maven repository.
-3. Add the owlet dependency to your `pom.xml`: 
+owlet is available from Maven Central. To use it in your project, add the owlet dependency to your `pom.xml`: 
 
 ```xml
 <dependency>
   <groupId>org.phenoscape</groupId>
   <artifactId>owlet</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>2.0</version>
 </dependency>
 ```
 
-## How does it work
+## How it works
 The OWL class expression to be expanded is a string literal at an appropriate location in a SPARQL query. The query expander recognizes the literal containing the class expression by its datatype, which must be `http://purl.org/phenoscape/owlet/syntax#omn`. [Datatypes of literals in SPARQL] are assigned using the `^^TypeURI` suffix notation (where `TypeURI` is the URI of the datatype; URI prefixes are allowed).
 
-The literal containing the class expression must be in one of the following 3 triple patterns (with `rdf`, `rdfs`, `owl` declared [as in prefix.cc], and `owlet` as `<http://purl.org/phenoscape/owlet/syntax#>`):
+The literal containing the class expression must be in one of the following 5 triple patterns (with `rdf`, `rdfs`, `owl`, `sesame` declared [as in prefix.cc], and `owlet` as `<http://purl.org/phenoscape/owlet/syntax#>`):
 
 1. Subclass triple: `?x rdfs:subClassOf "owl:Thing"^^owlet:omn`
-2. instance-of triple: `?x rdf:type "owl:Thing"^^owlet:omn`
-3. equivalent class triple: `?x owl:equivalentClass "owl:Thing"^^owlet:omn`
+2. Equivalent class triple: `?x owl:equivalentClass "owl:Thing"^^owlet:omn`
+3. Instance of triple: `?x rdf:type "owl:Thing"^^owlet:omn`
+4. Direct subclass triple: `?x sesame:directSubClassOf "owl:Thing"^^owlet:omn`
+5. Direct instance of triple: `?x sesame:directType "owl:Thing"^^owlet:omn`
 
 Each of these triples will be rewritten by the expander in the following pattern:
 ```
-FILTER(?x IN (<URI1>,<URI2>,<URI3>,...))
+VALUES ?x { <URI1> <URI2> <URI3> ... }
 ```
 where `<URI1>,<URI2>,<URI3>,...` is the list of class or instance identifiers that satisfy the OWL class expression, as determined by the reasoner.
 
