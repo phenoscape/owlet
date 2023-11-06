@@ -35,7 +35,7 @@ testFrameworks += new TestFramework("utest.runner.Framework")
 
 Test / parallelExecution := false
 
-lazy val jenaVersion = "4.9.0"
+lazy val jenaVersion = "4.10.0"
 
 libraryDependencies ++= {
     Seq(
