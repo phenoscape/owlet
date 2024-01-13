@@ -43,7 +43,7 @@ libraryDependencies ++= {
       "org.apache.jena"            %  "jena-core"                % jenaVersion,
       "org.apache.jena"            %  "jena-arq"                 % jenaVersion,
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.5",
-      "org.slf4j"                  %  "slf4j-log4j12"            % "2.0.9" % Test,
+      "org.slf4j"                  %  "slf4j-log4j12"            % "2.0.11" % Test,
       "org.semanticweb.elk"        %  "elk-owlapi"               % "0.4.3"  % Test,
       "com.lihaoyi"                %% "utest"                    % "0.8.1"  % Test
     )
