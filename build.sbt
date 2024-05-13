@@ -39,7 +39,7 @@ lazy val jenaVersion = "4.9.0"
 
 libraryDependencies ++= {
     Seq(
-      "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.26",
+      "net.sourceforge.owlapi"     %  "owlapi-distribution"      % "4.5.29",
       "org.apache.jena"            %  "jena-core"                % jenaVersion,
       "org.apache.jena"            %  "jena-arq"                 % jenaVersion,
       "com.typesafe.scala-logging" %% "scala-logging"            % "3.9.5",
